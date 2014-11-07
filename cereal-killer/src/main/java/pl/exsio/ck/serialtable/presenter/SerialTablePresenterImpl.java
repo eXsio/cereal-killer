@@ -1,4 +1,3 @@
-
 package pl.exsio.ck.serialtable.presenter;
 
 import java.awt.Container;

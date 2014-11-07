@@ -15,7 +15,6 @@ import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import pl.exsio.ck.logging.presenter.LogPresenter;
-import pl.exsio.ck.main.app.App;
 import pl.exsio.ck.model.Entry;
 import pl.exsio.ck.model.dao.EntryDao;
 import pl.exsio.ck.progress.presenter.ProgressPresenter;

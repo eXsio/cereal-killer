@@ -1,4 +1,3 @@
-
 package pl.exsio.ck.model.dao;
 
 import java.util.Collection;

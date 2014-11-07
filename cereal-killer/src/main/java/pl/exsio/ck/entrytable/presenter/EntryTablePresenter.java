@@ -1,4 +1,3 @@
-
 package pl.exsio.ck.entrytable.presenter;
 
 import java.util.Collection;

@@ -1,4 +1,3 @@
-
 package pl.exsio.ck.main.presenter;
 
 import pl.exsio.ck.comparator.EntryComparator;

@@ -1,4 +1,3 @@
-
 package pl.exsio.ck.comparator;
 
 import java.io.File;

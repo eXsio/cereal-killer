@@ -1,4 +1,3 @@
-
 package pl.exsio.ck.logging.presenter;
 
 import pl.exsio.ck.logging.view.AbstractLogPanel;

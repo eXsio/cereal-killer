@@ -1,4 +1,3 @@
-
 package pl.exsio.ck.presenter;
 
 import java.awt.Container;

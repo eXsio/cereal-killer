@@ -1,7 +1,6 @@
 package pl.exsio.ck.serialtable.view;
 
 import javax.swing.JTable;
-import pl.exsio.ck.serialtable.presenter.SerialTablePresenter;
 
 /**
  *

@@ -1,4 +1,3 @@
-
 package pl.exsio.ck.view;
 
 import java.awt.GraphicsDevice;

@@ -1,4 +1,3 @@
-
 package pl.exsio.ck.importer;
 
 import java.io.File;

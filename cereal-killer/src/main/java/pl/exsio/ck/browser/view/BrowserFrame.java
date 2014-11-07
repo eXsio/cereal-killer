@@ -1,4 +1,3 @@
-
 package pl.exsio.ck.browser.view;
 
 import pl.exsio.ck.view.AbstractFrame;
