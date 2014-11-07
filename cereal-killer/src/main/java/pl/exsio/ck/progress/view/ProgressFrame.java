@@ -70,14 +70,6 @@ public class ProgressFrame extends AbstractFrame {
         this.presenter = presenter;
     }
 
-    public void setProgressName(String name) {
-        this.presenter.setProgressName(name);
-    }
-
-    public void setProgress(int percent) {
-        this.presenter.setProgress(percent);
-    }
-
     public JProgressBar getBar() {
         return bar;
     }

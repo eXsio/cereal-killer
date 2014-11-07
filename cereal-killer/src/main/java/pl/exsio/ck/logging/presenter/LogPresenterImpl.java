@@ -9,12 +9,13 @@ import pl.exsio.ck.logging.view.LogPanel;
 
 public class LogPresenterImpl implements LogPresenter {
 
-    private final LogPanel view;
+    private LogPanel view;
 
     private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
-    public LogPresenterImpl(LogPanel view) {
+    public void setView(LogPanel view) {
         this.view = view;
+        view.setPresenter(this);
     }
 
     @Override

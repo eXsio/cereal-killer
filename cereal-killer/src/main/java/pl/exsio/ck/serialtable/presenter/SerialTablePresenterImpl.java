@@ -12,8 +12,9 @@ public class SerialTablePresenterImpl implements SerialTablePresenter {
 
     private SerialTablePanel view;
 
-    public SerialTablePresenterImpl(SerialTablePanel view) {
+    public void setView(SerialTablePanel view) {
         this.view = view;
+        view.setPresenter(this);
     }
 
     @Override

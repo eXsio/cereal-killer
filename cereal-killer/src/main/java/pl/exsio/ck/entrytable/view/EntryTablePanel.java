@@ -1,10 +1,8 @@
 
 package pl.exsio.ck.entrytable.view;
 
-import java.util.Collection;
 import javax.swing.JTable;
 import pl.exsio.ck.entrytable.presenter.EntryTablePresenter;
-import pl.exsio.ck.model.Entry;
 
 /**
  *
@@ -70,9 +68,5 @@ public class EntryTablePanel extends javax.swing.JPanel {
 
     public void setPresenter(EntryTablePresenter presenter) {
         this.presenter = presenter;
-    }
-
-    public void showEntries(Collection<Entry> entries) {
-        this.presenter.showEntries(entries);
     }
 }

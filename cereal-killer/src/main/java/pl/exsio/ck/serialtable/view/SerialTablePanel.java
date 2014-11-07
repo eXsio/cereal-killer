@@ -1,7 +1,6 @@
 
 package pl.exsio.ck.serialtable.view;
 
-import java.util.Collection;
 import javax.swing.JTable;
 import pl.exsio.ck.serialtable.presenter.SerialTablePresenter;
 
@@ -69,9 +68,5 @@ public class SerialTablePanel extends javax.swing.JPanel {
 
     public void setPresenter(SerialTablePresenter presenter) {
         this.presenter = presenter;
-    }
-
-    public void showSerials(Collection<String> serials) {
-        this.presenter.showSerials(serials);
     }
 }

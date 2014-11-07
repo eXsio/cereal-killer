@@ -7,7 +7,6 @@ import java.util.Collection;
 import javax.swing.JTable;
 import javax.swing.SwingWorker;
 import javax.swing.table.DefaultTableModel;
-import static org.apache.commons.lang3.CharSetUtils.count;
 import pl.exsio.ck.entrytable.view.EntryTablePanel;
 import pl.exsio.ck.model.Entry;
 
@@ -15,12 +14,13 @@ public class EntryTablePresenterImpl implements EntryTablePresenter {
 
     private EntryTablePanel view;
 
-    private SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd");
+    private final SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd");
 
-    private SimpleDateFormat datetime = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+    private final SimpleDateFormat datetime = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
-    public EntryTablePresenterImpl(EntryTablePanel view) {
+    public void setView(EntryTablePanel view) {
         this.view = view;
+        view.setPresenter(this);
     }
 
     @Override

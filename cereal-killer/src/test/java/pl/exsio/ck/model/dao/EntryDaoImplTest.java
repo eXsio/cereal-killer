@@ -1,5 +1,6 @@
 package pl.exsio.ck.model.dao;
 
+import java.awt.Container;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -9,6 +10,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import pl.exsio.ck.logging.presenter.LogPresenter;
 import pl.exsio.ck.model.Entry;
 
 /**
@@ -24,7 +26,7 @@ public class EntryDaoImplTest {
 
     @Before
     public void setUp() {
-        this.dao = new EntryDaoImpl("jdbc:sqlite:test_database.db");
+        this.dao = new EntryDaoImpl(getMockLogPresenter(), "jdbc:sqlite:test_database.db");
     }
 
     @After
@@ -144,6 +146,25 @@ public class EntryDaoImplTest {
             entries.add(this.getEntry(i));
         }
         return entries;
+    }
+
+    private LogPresenter getMockLogPresenter() {
+        return new LogPresenter() {
+
+            @Override
+            public void log(String msg) {
+                System.out.println(msg);
+            }
+
+            @Override
+            public void clean() {
+            }
+
+            @Override
+            public Container getView() {
+                return null;
+            }
+        };
     }
 
 }

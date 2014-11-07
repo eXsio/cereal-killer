@@ -14,7 +14,7 @@ public class MainFrame extends AbstractFrame {
 
     private MainPresenter presenter;
 
-    private LogPanel log;
+    private LogPanel logPanel;
 
     /**
      * Creates new form MainFrame
@@ -160,13 +160,13 @@ public class MainFrame extends AbstractFrame {
     private javax.swing.JButton updateBtn;
     // End of variables declaration//GEN-END:variables
 
-    public void setLog(final LogPanel log) {
-        this.log = log;
+    public void setLogPanel(final LogPanel logPanel) {
+        this.logPanel = logPanel;
         SwingWorker worker = new SwingWorker() {
 
             @Override
             protected Object doInBackground() throws Exception {
-                mainTabs.add("Log", log);
+                mainTabs.add("Log", logPanel);
                 return null;
             }
 

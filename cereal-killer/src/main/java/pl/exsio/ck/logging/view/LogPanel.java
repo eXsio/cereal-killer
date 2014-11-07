@@ -70,7 +70,7 @@ public class LogPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void cleanBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cleanBtnActionPerformed
-        this.clean();
+        this.presenter.clean();
     }//GEN-LAST:event_cleanBtnActionPerformed
 
 
@@ -86,14 +86,6 @@ public class LogPanel extends javax.swing.JPanel {
 
     public void setPresenter(LogPresenter presenter) {
         this.presenter = presenter;
-    }
-
-    public void log(String msg) {
-        this.presenter.log(msg);
-    }
-
-    public void clean() {
-        this.presenter.clean();
     }
 
 }

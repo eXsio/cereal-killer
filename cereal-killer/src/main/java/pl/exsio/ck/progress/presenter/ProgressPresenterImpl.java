@@ -7,10 +7,11 @@ import pl.exsio.ck.progress.view.ProgressFrame;
 
 public class ProgressPresenterImpl implements ProgressPresenter {
 
-    private final ProgressFrame view;
+    private ProgressFrame view;
 
-    public ProgressPresenterImpl(ProgressFrame view) {
+    public void setView(ProgressFrame view) {
         this.view = view;
+        view.setPresenter(this);
         view.getBar().setIndeterminate(false);
         view.getBar().setStringPainted(true);
         view.getBar().setVisible(true);

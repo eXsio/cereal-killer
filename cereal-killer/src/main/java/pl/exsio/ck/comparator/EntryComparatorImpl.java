@@ -1,4 +1,3 @@
-
 package pl.exsio.ck.comparator;
 
 import java.awt.BorderLayout;
@@ -17,15 +16,15 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import pl.exsio.ck.browser.view.BrowserFrame;
 import pl.exsio.ck.entrytable.presenter.EntryTablePresenter;
-import pl.exsio.ck.entrytable.presenter.EntryTablePresenterImpl;
-import pl.exsio.ck.entrytable.view.EntryTablePanel;
+import pl.exsio.ck.logging.presenter.LogPresenter;
 import pl.exsio.ck.main.app.App;
 import pl.exsio.ck.model.Entry;
 import pl.exsio.ck.serialtable.presenter.SerialTablePresenter;
-import pl.exsio.ck.serialtable.presenter.SerialTablePresenterImpl;
-import pl.exsio.ck.serialtable.view.SerialTablePanel;
+import pl.exsio.ck.table.TableAware;
 
-public class EntryComparatorImpl implements EntryComparator {
+public class EntryComparatorImpl extends TableAware implements EntryComparator {
+
+    private LogPresenter log;
 
     @Override
     public void compareFile(File file) {
@@ -39,22 +38,18 @@ public class EntryComparatorImpl implements EntryComparator {
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                BrowserFrame browser = new BrowserFrame();
+                BrowserFrame browser = getBrowserFrame();
                 JTabbedPane tabs = new JTabbedPane();
 
-                EntryTablePanel foundPanel = new EntryTablePanel();
-                EntryTablePresenter entryPresenter = new EntryTablePresenterImpl(foundPanel);
-                foundPanel.setPresenter(entryPresenter);
-                foundPanel.showEntries(entries);
+                EntryTablePresenter entryPresenter = getEntryTablePresenter();
+                entryPresenter.showEntries(entries);
 
-                SerialTablePanel notFoundPanel = new SerialTablePanel();
-                SerialTablePresenter serialPresenter = new SerialTablePresenterImpl(notFoundPanel);
-                notFoundPanel.setPresenter(serialPresenter);
-                notFoundPanel.showSerials(notFound);
+                SerialTablePresenter serialPresenter = getSerialTablePresenter();
+                serialPresenter.showSerials(notFound);
 
                 browser.setLayout(new BorderLayout());
-                tabs.add("Znalezione", foundPanel);
-                tabs.add("Nieznalezione", notFoundPanel);
+                tabs.add("Znalezione", entryPresenter.getView());
+                tabs.add("Nieznalezione", serialPresenter.getView());
                 browser.add(tabs);
                 browser.setTitle("Porównaj wpisy");
                 browser.pack();
@@ -92,8 +87,8 @@ public class EntryComparatorImpl implements EntryComparator {
                 rowCounter++;
             }
         } catch (IOException ex) {
-            App.log("nieudana próba otwarcia pliku " + file.getAbsolutePath());
-            App.log(ExceptionUtils.getMessage(ex));
+            this.log.log("nieudana próba otwarcia pliku " + file.getAbsolutePath());
+            this.log.log(ExceptionUtils.getMessage(ex));
         }
         return serials;
     }
@@ -130,6 +125,10 @@ public class EntryComparatorImpl implements EntryComparator {
             }
         }
         return notFound;
+    }
+
+    public void setLog(LogPresenter log) {
+        this.log = log;
     }
 
 }

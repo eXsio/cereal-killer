@@ -1,4 +1,3 @@
-
 package pl.exsio.ck.main.presenter;
 
 import java.awt.BorderLayout;
@@ -10,26 +9,29 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import pl.exsio.ck.browser.view.BrowserFrame;
 import pl.exsio.ck.comparator.EntryComparator;
 import pl.exsio.ck.entrytable.presenter.EntryTablePresenter;
-import pl.exsio.ck.entrytable.presenter.EntryTablePresenterImpl;
-import pl.exsio.ck.entrytable.view.EntryTablePanel;
 import pl.exsio.ck.importer.EntryImporter;
+import pl.exsio.ck.logging.presenter.LogPresenter;
 import pl.exsio.ck.main.app.App;
 import pl.exsio.ck.main.view.MainFrame;
+import pl.exsio.ck.table.TableAware;
 
 /**
  *
  * @author exsio
  */
-public class MainPresenterImpl implements MainPresenter {
+public class MainPresenterImpl extends TableAware implements MainPresenter {
 
-    private final MainFrame view;
+    private MainFrame view;
 
     private EntryImporter importer;
 
     private EntryComparator comparator;
 
-    public MainPresenterImpl(MainFrame view) {
+    private LogPresenter log;
+
+    public void setView(MainFrame view) {
         this.view = view;
+        view.setPresenter(this);
     }
 
     @Override
@@ -69,8 +71,8 @@ public class MainPresenterImpl implements MainPresenter {
             try {
                 importThread.join();
             } catch (InterruptedException ex) {
-                App.log("Podczas porównania wystąpił błąd");
-                App.log(ExceptionUtils.getMessage(ex));
+                this.log.log("Podczas porównania wystąpił błąd");
+                this.log.log(ExceptionUtils.getMessage(ex));
             }
             this.view.setEnabled(true);
         }
@@ -81,13 +83,11 @@ public class MainPresenterImpl implements MainPresenter {
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                BrowserFrame browser = new BrowserFrame();
-                EntryTablePanel panel = new EntryTablePanel();
-                EntryTablePresenter presenter = new EntryTablePresenterImpl(panel);
-                panel.setPresenter(presenter);
-                panel.showEntries(App.getEntryDao().findAll());
+                BrowserFrame browser = getBrowserFrame();
+                EntryTablePresenter presenter = getEntryTablePresenter();
+                presenter.showEntries(App.getEntryDao().findAll());
                 browser.setLayout(new BorderLayout());
-                browser.add(panel);
+                browser.add(presenter.getView());
                 browser.setTitle("Przeglądaj zaimportowane wpisy");
                 browser.pack();
                 browser.showOnScreen(0);
@@ -130,6 +130,10 @@ public class MainPresenterImpl implements MainPresenter {
     @Override
     public void setEntryComparator(EntryComparator comparator) {
         this.comparator = comparator;
+    }
+
+    public void setLog(LogPresenter log) {
+        this.log = log;
     }
 
 }

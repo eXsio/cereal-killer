@@ -1,4 +1,3 @@
-
 package pl.exsio.ck.model.dao;
 
 import java.sql.Connection;
@@ -11,7 +10,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import pl.exsio.ck.main.app.App;
+import pl.exsio.ck.logging.presenter.LogPresenter;
 import pl.exsio.ck.model.Entry;
 
 public final class EntryDaoImpl implements EntryDao {
@@ -21,12 +20,15 @@ public final class EntryDaoImpl implements EntryDao {
 
     private Connection conn;
 
-    public EntryDaoImpl() {
-        this.connect(DB_URL);
+    private LogPresenter log;
+
+    public EntryDaoImpl(LogPresenter log) {
+        this(log, DB_URL);
         this.setUp();
     }
 
-    public EntryDaoImpl(String dbUrl) {
+    public EntryDaoImpl(LogPresenter log, String dbUrl) {
+        this.log = log;
         this.connect(dbUrl);
         this.setUp();
     }
@@ -36,16 +38,16 @@ public final class EntryDaoImpl implements EntryDao {
         try {
             Class.forName(EntryDaoImpl.DRIVER);
         } catch (ClassNotFoundException ex) {
-            App.log("Brak sterownika JDBC");
-            App.log(ExceptionUtils.getMessage(ex));
+            this.log.log("Brak sterownika JDBC");
+            this.log.log(ExceptionUtils.getMessage(ex));
         }
 
         try {
             conn = DriverManager.getConnection(url);
-            App.log("ustanowiono połączenie z bazą danych (SQLite), url: " + url);
+            this.log.log("ustanowiono połączenie z bazą danych (SQLite), url: " + url);
         } catch (SQLException ex) {
-            App.log("Problem z otwarciem polaczenia");
-            App.log(ExceptionUtils.getMessage(ex));
+            this.log.log("Problem z otwarciem polaczenia");
+            this.log.log(ExceptionUtils.getMessage(ex));
         }
     }
 
@@ -63,8 +65,8 @@ public final class EntryDaoImpl implements EntryDao {
                 }
             }
         } catch (SQLException ex) {
-            App.log("wystąpił błąd podczas zapisywania wpisu: " + entry);
-            App.log(ExceptionUtils.getMessage(ex));
+            this.log.log("wystąpił błąd podczas zapisywania wpisu: " + entry);
+            this.log.log(ExceptionUtils.getMessage(ex));
             return null;
         }
     }
@@ -97,7 +99,7 @@ public final class EntryDaoImpl implements EntryDao {
 
     private Entry updateEntry(Entry entry) throws SQLException {
         PreparedStatement pstmt = this.getStatement("update entries set supplier = ?, buy_invoice_no = ?, recipient = ?, supply_date = ?, sell_date = ?, sell_invoice_no = ?, imported_at = ? where serial_no = ?");
-       
+
         pstmt.setString(1, entry.getSupplier());
         pstmt.setString(2, entry.getBuyInvoiceNo());
         pstmt.setString(3, entry.getRecipient());
@@ -105,7 +107,7 @@ public final class EntryDaoImpl implements EntryDao {
         pstmt.setDate(5, new Date(entry.getSellDate().getTime()));
         pstmt.setString(6, entry.getSellInvoiceNo());
         pstmt.setDate(7, new Date(new java.util.Date().getTime()));
-         pstmt.setString(8, entry.getSerialNo());
+        pstmt.setString(8, entry.getSerialNo());
         int affectedRows = pstmt.executeUpdate();
 
         if (affectedRows == 0) {
@@ -133,8 +135,8 @@ public final class EntryDaoImpl implements EntryDao {
             PreparedStatement pstmt = this.getStatement("delete from entries");
             pstmt.executeUpdate();
         } catch (SQLException ex) {
-            App.log("wystąpił błąd podczas czyszczenia tabeli");
-            App.log(ExceptionUtils.getMessage(ex));
+            this.log.log("wystąpił błąd podczas czyszczenia tabeli");
+            this.log.log(ExceptionUtils.getMessage(ex));
         }
     }
 
@@ -145,8 +147,8 @@ public final class EntryDaoImpl implements EntryDao {
             pstmt.setInt(1, id);
             return this.getEntry(pstmt.executeQuery());
         } catch (SQLException ex) {
-            App.log("wystąpił błąd podczas wyszukania wpisu: " + id);
-            App.log(ExceptionUtils.getMessage(ex));
+            this.log.log("wystąpił błąd podczas wyszukania wpisu: " + id);
+            this.log.log(ExceptionUtils.getMessage(ex));
             return null;
         }
     }
@@ -158,20 +160,20 @@ public final class EntryDaoImpl implements EntryDao {
             pstmt.setString(1, serialNo);
             return this.getEntry(pstmt.executeQuery());
         } catch (SQLException ex) {
-            App.log("wystąpił błąd podczas wyszukania wpisu: " + serialNo);
-            App.log(ExceptionUtils.getMessage(ex));
+            this.log.log("wystąpił błąd podczas wyszukania wpisu: " + serialNo);
+            this.log.log(ExceptionUtils.getMessage(ex));
             return null;
         }
     }
-    
+
     @Override
     public Collection<Entry> findAll() {
         try {
             PreparedStatement pstmt = this.getStatement("select * from entries");
             return this.getEntries(pstmt.executeQuery());
         } catch (SQLException ex) {
-            App.log("wystąpił błąd podczas wyszukania wpisów");
-            App.log(ExceptionUtils.getMessage(ex));
+            this.log.log("wystąpił błąd podczas wyszukania wpisów");
+            this.log.log(ExceptionUtils.getMessage(ex));
             return null;
         }
     }
@@ -193,8 +195,8 @@ public final class EntryDaoImpl implements EntryDao {
             }
             return this.getEntries(pstmt.executeQuery());
         } catch (SQLException ex) {
-            App.log("wystąpił błąd podczas wyszukania wpisów: " + Arrays.toString(serialNos));
-            App.log(ExceptionUtils.getMessage(ex));
+            this.log.log("wystąpił błąd podczas wyszukania wpisów: " + Arrays.toString(serialNos));
+            this.log.log(ExceptionUtils.getMessage(ex));
             return null;
         }
     }
@@ -205,8 +207,8 @@ public final class EntryDaoImpl implements EntryDao {
             try {
                 this.conn.close();
             } catch (SQLException ex) {
-                App.log("Problem z zamknięciem połączenia");
-                App.log(ExceptionUtils.getMessage(ex));
+                this.log.log("Problem z zamknięciem połączenia");
+                this.log.log(ExceptionUtils.getMessage(ex));
             }
         }
     }
@@ -244,8 +246,8 @@ public final class EntryDaoImpl implements EntryDao {
         try {
             return this.conn.prepareStatement(sql);
         } catch (SQLException ex) {
-            App.log("wystąpił błąd podczas przetwarzania zapytania: " + sql);
-            App.log(ExceptionUtils.getMessage(ex));
+            this.log.log("wystąpił błąd podczas przetwarzania zapytania: " + sql);
+            this.log.log(ExceptionUtils.getMessage(ex));
             return null;
         }
     }
@@ -256,8 +258,8 @@ public final class EntryDaoImpl implements EntryDao {
             PreparedStatement pstmt = this.conn.prepareStatement(createEntryTable);
             pstmt.execute();
         } catch (SQLException ex) {
-            App.log("Problem z utworzeniem tabeli");
-            App.log(ExceptionUtils.getMessage(ex));
+            this.log.log("Problem z utworzeniem tabeli");
+            this.log.log(ExceptionUtils.getMessage(ex));
         }
     }
 
