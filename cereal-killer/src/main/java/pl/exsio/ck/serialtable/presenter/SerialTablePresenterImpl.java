@@ -6,13 +6,14 @@ import java.util.Collection;
 import javax.swing.JTable;
 import javax.swing.SwingWorker;
 import javax.swing.table.DefaultTableModel;
-import pl.exsio.ck.serialtable.view.SerialTablePanel;
+import pl.exsio.ck.serialtable.view.AbstractSerialTablePanel;
 
 public class SerialTablePresenterImpl implements SerialTablePresenter {
 
-    private SerialTablePanel view;
+    private AbstractSerialTablePanel view;
 
-    public void setView(SerialTablePanel view) {
+    @Override
+    public void setView(AbstractSerialTablePanel view) {
         this.view = view;
         view.setPresenter(this);
     }

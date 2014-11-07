@@ -1,4 +1,3 @@
-
 package pl.exsio.ck.entrytable.presenter;
 
 import java.awt.Container;
@@ -7,18 +6,19 @@ import java.util.Collection;
 import javax.swing.JTable;
 import javax.swing.SwingWorker;
 import javax.swing.table.DefaultTableModel;
-import pl.exsio.ck.entrytable.view.EntryTablePanel;
+import pl.exsio.ck.entrytable.view.AbstractEntryTablePanel;
 import pl.exsio.ck.model.Entry;
 
 public class EntryTablePresenterImpl implements EntryTablePresenter {
 
-    private EntryTablePanel view;
+    private AbstractEntryTablePanel view;
 
     private final SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd");
 
     private final SimpleDateFormat datetime = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
-    public void setView(EntryTablePanel view) {
+    @Override
+    public void setView(AbstractEntryTablePanel view) {
         this.view = view;
         view.setPresenter(this);
     }

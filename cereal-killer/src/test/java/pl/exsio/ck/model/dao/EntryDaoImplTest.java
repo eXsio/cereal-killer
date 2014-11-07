@@ -7,10 +7,14 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import org.junit.After;
+import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import pl.exsio.ck.logging.presenter.LogPresenter;
+import pl.exsio.ck.logging.view.AbstractLogPanel;
 import pl.exsio.ck.model.Entry;
 
 /**
@@ -149,22 +153,8 @@ public class EntryDaoImplTest {
     }
 
     private LogPresenter getMockLogPresenter() {
-        return new LogPresenter() {
-
-            @Override
-            public void log(String msg) {
-                System.out.println(msg);
-            }
-
-            @Override
-            public void clean() {
-            }
-
-            @Override
-            public Container getView() {
-                return null;
-            }
-        };
+        LogPresenter mock = mock(LogPresenter.class);
+        return mock;
     }
 
 }

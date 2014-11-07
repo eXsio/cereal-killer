@@ -3,6 +3,7 @@ package pl.exsio.ck.main.presenter;
 
 import pl.exsio.ck.comparator.EntryComparator;
 import pl.exsio.ck.importer.EntryImporter;
+import pl.exsio.ck.main.view.AbstractMainFrame;
 import pl.exsio.ck.presenter.Presenter;
 
 /**
@@ -11,6 +12,8 @@ import pl.exsio.ck.presenter.Presenter;
  */
 public interface MainPresenter extends Presenter {
 
+    void setView(AbstractMainFrame view);
+    
     void showImportWindow(boolean updateEnabled);
 
     void showCompareWindow();

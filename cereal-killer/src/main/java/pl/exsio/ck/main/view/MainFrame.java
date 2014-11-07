@@ -1,20 +1,13 @@
-
 package pl.exsio.ck.main.view;
 
 import javax.swing.SwingWorker;
 import pl.exsio.ck.logging.view.LogPanel;
-import pl.exsio.ck.main.presenter.MainPresenter;
-import pl.exsio.ck.view.AbstractFrame;
 
 /**
  *
  * @author exsio
  */
-public class MainFrame extends AbstractFrame {
-
-    private MainPresenter presenter;
-
-    private LogPanel logPanel;
+public class MainFrame extends AbstractMainFrame {
 
     /**
      * Creates new form MainFrame
@@ -145,12 +138,6 @@ public class MainFrame extends AbstractFrame {
         this.presenter.showBrowseWindow();
     }//GEN-LAST:event_browseBtnActionPerformed
 
-    public MainFrame setPresenter(MainPresenter presenter) {
-        this.presenter = presenter;
-        return this;
-    }
-
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton browseBtn;
     private javax.swing.JButton closeBtn;
@@ -160,8 +147,9 @@ public class MainFrame extends AbstractFrame {
     private javax.swing.JButton updateBtn;
     // End of variables declaration//GEN-END:variables
 
+    @Override
     public void setLogPanel(final LogPanel logPanel) {
-        this.logPanel = logPanel;
+        super.setLogPanel(logPanel);
         SwingWorker worker = new SwingWorker() {
 
             @Override

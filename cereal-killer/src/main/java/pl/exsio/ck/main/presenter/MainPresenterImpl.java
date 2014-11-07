@@ -6,15 +6,14 @@ import java.io.File;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import pl.exsio.ck.browser.view.BrowserFrame;
 import pl.exsio.ck.comparator.EntryComparator;
 import pl.exsio.ck.entrytable.presenter.EntryTablePresenter;
 import pl.exsio.ck.importer.EntryImporter;
 import pl.exsio.ck.logging.presenter.LogPresenter;
-import pl.exsio.ck.main.app.App;
-import pl.exsio.ck.main.view.MainFrame;
+import pl.exsio.ck.main.view.AbstractMainFrame;
 import pl.exsio.ck.model.dao.EntryDao;
 import pl.exsio.ck.table.TableAware;
+import pl.exsio.ck.view.AbstractFrame;
 
 /**
  *
@@ -22,7 +21,7 @@ import pl.exsio.ck.table.TableAware;
  */
 public class MainPresenterImpl extends TableAware implements MainPresenter {
 
-    private MainFrame view;
+    private AbstractMainFrame view;
 
     private EntryImporter importer;
 
@@ -32,7 +31,8 @@ public class MainPresenterImpl extends TableAware implements MainPresenter {
 
     private EntryDao dao;
 
-    public void setView(MainFrame view) {
+    @Override
+    public void setView(AbstractMainFrame view) {
         this.view = view;
         view.setPresenter(this);
     }
@@ -86,7 +86,7 @@ public class MainPresenterImpl extends TableAware implements MainPresenter {
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                BrowserFrame browser = getBrowserFrame();
+                AbstractFrame browser = getBrowserFrame();
                 EntryTablePresenter presenter = getEntryTablePresenter();
                 presenter.showEntries(dao.findAll());
                 browser.setLayout(new BorderLayout());

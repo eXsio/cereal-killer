@@ -1,18 +1,14 @@
-
 package pl.exsio.ck.progress.view;
 
 import javax.swing.JLabel;
 import javax.swing.JProgressBar;
 import pl.exsio.ck.progress.presenter.ProgressPresenter;
-import pl.exsio.ck.view.AbstractFrame;
 
 /**
  *
  * @author exsio
  */
-public class ProgressFrame extends AbstractFrame {
-
-    private ProgressPresenter presenter;
+public class ProgressFrame extends AbstractProgressFrame {
 
     /**
      * Creates new form ProgressFrame
@@ -66,14 +62,12 @@ public class ProgressFrame extends AbstractFrame {
     private javax.swing.JLabel name;
     // End of variables declaration//GEN-END:variables
 
-    public void setPresenter(ProgressPresenter presenter) {
-        this.presenter = presenter;
-    }
-
+    @Override
     public JProgressBar getBar() {
         return bar;
     }
 
+    @Override
     public JLabel getNameLabel() {
         return name;
     }

@@ -3,13 +3,13 @@ package pl.exsio.ck.progress.presenter;
 
 import java.awt.Container;
 import javax.swing.SwingWorker;
-import pl.exsio.ck.progress.view.ProgressFrame;
+import pl.exsio.ck.progress.view.AbstractProgressFrame;
 
 public class ProgressPresenterImpl implements ProgressPresenter {
 
-    private ProgressFrame view;
+    private AbstractProgressFrame view;
 
-    public void setView(ProgressFrame view) {
+    public void setView(AbstractProgressFrame view) {
         this.view = view;
         view.setPresenter(this);
         view.getBar().setIndeterminate(false);

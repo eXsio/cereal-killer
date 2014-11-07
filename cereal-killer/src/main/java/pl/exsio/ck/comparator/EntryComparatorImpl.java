@@ -14,14 +14,13 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import pl.exsio.ck.browser.view.BrowserFrame;
 import pl.exsio.ck.entrytable.presenter.EntryTablePresenter;
 import pl.exsio.ck.logging.presenter.LogPresenter;
-import pl.exsio.ck.main.app.App;
 import pl.exsio.ck.model.Entry;
 import pl.exsio.ck.model.dao.EntryDao;
 import pl.exsio.ck.serialtable.presenter.SerialTablePresenter;
 import pl.exsio.ck.table.TableAware;
+import pl.exsio.ck.view.AbstractFrame;
 
 public class EntryComparatorImpl extends TableAware implements EntryComparator {
 
@@ -41,7 +40,7 @@ public class EntryComparatorImpl extends TableAware implements EntryComparator {
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                BrowserFrame browser = getBrowserFrame();
+                AbstractFrame browser = getBrowserFrame();
                 JTabbedPane tabs = new JTabbedPane();
 
                 EntryTablePresenter entryPresenter = getEntryTablePresenter();

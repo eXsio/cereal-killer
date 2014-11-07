@@ -1,4 +1,3 @@
-
 package pl.exsio.ck.serialtable.view;
 
 import javax.swing.JTable;
@@ -8,9 +7,7 @@ import pl.exsio.ck.serialtable.presenter.SerialTablePresenter;
  *
  * @author exsio
  */
-public class SerialTablePanel extends javax.swing.JPanel {
-
-    private SerialTablePresenter presenter;
+public class SerialTablePanel extends AbstractSerialTablePanel {
 
     /**
      * Creates new form BrowserPanel
@@ -62,11 +59,9 @@ public class SerialTablePanel extends javax.swing.JPanel {
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
 
+    @Override
     public JTable getEntryTable() {
         return entryTable;
     }
 
-    public void setPresenter(SerialTablePresenter presenter) {
-        this.presenter = presenter;
-    }
 }

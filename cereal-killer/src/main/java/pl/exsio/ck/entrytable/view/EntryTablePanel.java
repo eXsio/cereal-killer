@@ -1,16 +1,12 @@
-
 package pl.exsio.ck.entrytable.view;
 
 import javax.swing.JTable;
-import pl.exsio.ck.entrytable.presenter.EntryTablePresenter;
 
 /**
  *
  * @author exsio
  */
-public class EntryTablePanel extends javax.swing.JPanel {
-
-    private EntryTablePresenter presenter;
+public class EntryTablePanel extends AbstractEntryTablePanel {
 
     /**
      * Creates new form BrowserPanel
@@ -62,11 +58,9 @@ public class EntryTablePanel extends javax.swing.JPanel {
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
 
+    @Override
     public JTable getEntryTable() {
         return entryTable;
     }
 
-    public void setPresenter(EntryTablePresenter presenter) {
-        this.presenter = presenter;
-    }
 }

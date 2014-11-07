@@ -1,7 +1,7 @@
-
 package pl.exsio.ck.progress.presenter;
 
 import pl.exsio.ck.presenter.Presenter;
+import pl.exsio.ck.progress.view.AbstractProgressFrame;
 
 /**
  *
@@ -9,7 +9,9 @@ import pl.exsio.ck.presenter.Presenter;
  */
 public interface ProgressPresenter extends Presenter {
 
+    void setView(AbstractProgressFrame view);
+
     void setProgressName(String name);
-    
+
     void setProgress(int percent);
 }

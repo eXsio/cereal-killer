@@ -1,16 +1,12 @@
-
 package pl.exsio.ck.logging.view;
 
 import javax.swing.JTextArea;
-import pl.exsio.ck.logging.presenter.LogPresenter;
 
 /**
  *
  * @author exsio
  */
-public class LogPanel extends javax.swing.JPanel {
-
-    private LogPresenter presenter;
+public class LogPanel extends AbstractLogPanel {
 
     /**
      * Creates new form LogPanel
@@ -80,12 +76,9 @@ public class LogPanel extends javax.swing.JPanel {
     private javax.swing.JTextArea logArea;
     // End of variables declaration//GEN-END:variables
 
+    @Override
     public JTextArea getLogArea() {
         return logArea;
-    }
-
-    public void setPresenter(LogPresenter presenter) {
-        this.presenter = presenter;
     }
 
 }

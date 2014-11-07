@@ -1,19 +1,19 @@
-
 package pl.exsio.ck.logging.presenter;
 
 import java.awt.Container;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.swing.SwingWorker;
-import pl.exsio.ck.logging.view.LogPanel;
+import pl.exsio.ck.logging.view.AbstractLogPanel;
 
 public class LogPresenterImpl implements LogPresenter {
 
-    private LogPanel view;
+    private AbstractLogPanel view;
 
     private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
-    public void setView(LogPanel view) {
+    @Override
+    public void setView(AbstractLogPanel view) {
         this.view = view;
         view.setPresenter(this);
     }
