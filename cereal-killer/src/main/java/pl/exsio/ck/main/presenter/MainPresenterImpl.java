@@ -122,6 +122,7 @@ public class MainPresenterImpl extends TableAware implements MainPresenter {
                 return "Pliki XLSX";
             }
         });
+        jfc.setCurrentDirectory(new File("."));
         return jfc;
     }
 
