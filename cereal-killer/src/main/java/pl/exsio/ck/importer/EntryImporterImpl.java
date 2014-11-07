@@ -39,7 +39,7 @@ public class EntryImporterImpl implements EntryImporter {
             this.showProgressBar(updateEnabled);
             XSSFSheet sheet = this.openSheet(file);
             Iterator<Row> rowIterator = sheet.iterator();
-            List<Entry> entries = new LinkedList<>();
+            this.updateProgressBar(0, sheet.getPhysicalNumberOfRows() - 1);
             int rowCounter = 0;
             while (rowIterator.hasNext()) {
                 this.updateProgressBar(rowCounter, sheet.getPhysicalNumberOfRows() - 1);
@@ -51,11 +51,11 @@ public class EntryImporterImpl implements EntryImporter {
                         currentCell = cellIterator.next();
                         this.fillEntry(currentCell, e);
                     }
-                    entries.add(e);
+                    this.dao.save(e, updateEnabled);
                 }
                 rowCounter++;
             }
-            this.dao.save(entries, updateEnabled);
+
             this.log.log((updateEnabled ? "aktualizacja zakończona" : "import zakończony") + " powodzeniem");
         } catch (IOException ex) {
             this.log.log("nieudana próba otwarcia pliku " + file.getAbsolutePath());

@@ -61,5 +61,6 @@
     <bean name="entryComparator" class="pl.exsio.ck.comparator.EntryComparatorImpl">
         <property name="log" ref="logPresenter"/>
         <property name="dao" ref="entryDao"/>
+        <property name="progress" ref="progressPresenter"/>
     </bean>
 </beans>

@@ -48,7 +48,9 @@ public class MainPresenterImpl extends TableAware implements MainPresenter {
 
                 @Override
                 public void run() {
+                    view.setEnabled(false);
                     importer.importFile(file, updateEnabled);
+                    view.setEnabled(true);
                 }
             });
             importThread.start();
@@ -63,20 +65,16 @@ public class MainPresenterImpl extends TableAware implements MainPresenter {
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             final File file = jfc.getSelectedFile();
             this.view.setEnabled(false);
-            Thread importThread = new Thread(new Runnable() {
+            Thread compare = new Thread(new Runnable() {
 
                 @Override
                 public void run() {
+                    view.setEnabled(false);
                     comparator.compareFile(file);
+                    view.setEnabled(true);
                 }
             });
-            importThread.start();
-            try {
-                importThread.join();
-            } catch (InterruptedException ex) {
-                this.log.log("Podczas porównania wystąpił błąd");
-                this.log.log(ExceptionUtils.getMessage(ex));
-            }
+            compare.start();
             this.view.setEnabled(true);
         }
     }
