@@ -5,9 +5,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -41,6 +40,7 @@ public class EntryImporterImpl implements EntryImporter {
             Iterator<Row> rowIterator = sheet.iterator();
             this.updateProgressBar(0, sheet.getPhysicalNumberOfRows() - 1);
             int rowCounter = 0;
+            ArrayList<Entry> entries = new ArrayList<>();
             while (rowIterator.hasNext()) {
                 this.updateProgressBar(rowCounter, sheet.getPhysicalNumberOfRows() - 1);
                 currentRow = rowIterator.next();
@@ -51,10 +51,11 @@ public class EntryImporterImpl implements EntryImporter {
                         currentCell = cellIterator.next();
                         this.fillEntry(currentCell, e);
                     }
-                    this.dao.save(e, updateEnabled);
+                    entries.add(e);
                 }
                 rowCounter++;
             }
+            this.dao.save(entries, updateEnabled);
 
             this.log.log((updateEnabled ? "aktualizacja zakończona" : "import zakończony") + " powodzeniem");
         } catch (IOException ex) {

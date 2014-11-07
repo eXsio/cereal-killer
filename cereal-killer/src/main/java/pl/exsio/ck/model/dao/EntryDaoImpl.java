@@ -53,17 +53,9 @@ public final class EntryDaoImpl implements EntryDao {
 
     @Override
     public Entry save(Entry entry, boolean updateExisting) {
+
         try {
-            Entry existing = this.findOneBySerialNo(entry.getSerialNo());
-            if (existing == null) {
-                return this.insertNewEntry(entry);
-            } else {
-                if (updateExisting) {
-                    return this.updateEntry(entry);
-                } else {
-                    throw new SQLException("There already is an entry with serial no: " + entry.getSerialNo());
-                }
-            }
+            return this.saveCollection(Arrays.asList(new Entry[]{entry}), updateExisting).iterator().next();
         } catch (SQLException ex) {
             this.log.log("wystąpił błąd podczas zapisywania wpisu: " + entry);
             this.log.log(ExceptionUtils.getMessage(ex));
@@ -71,62 +63,46 @@ public final class EntryDaoImpl implements EntryDao {
         }
     }
 
-    private Entry insertNewEntry(Entry entry) throws SQLException {
-        PreparedStatement pstmt = this.getStatement("insert into entries (serial_no, supplier, buy_invoice_no, recipient, supply_date, sell_date, sell_invoice_no, imported_at) values(?,?,?,?,?,?,?,?)");
-        pstmt.setString(1, entry.getSerialNo());
-        pstmt.setString(2, entry.getSupplier());
-        pstmt.setString(3, entry.getBuyInvoiceNo());
-        pstmt.setString(4, entry.getRecipient());
-        pstmt.setDate(5, new Date(entry.getSupplyDate().getTime()));
-        pstmt.setDate(6, new Date(entry.getSellDate().getTime()));
-        pstmt.setString(7, entry.getSellInvoiceNo());
-        pstmt.setDate(8, new Date(new java.util.Date().getTime()));
-        int affectedRows = pstmt.executeUpdate();
-
-        if (affectedRows == 0) {
-            throw new SQLException("Creating entry failed, no rows affected.");
-        }
-
-        try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
-            if (generatedKeys.next()) {
-                entry.setId(generatedKeys.getInt(1));
-            } else {
-                throw new SQLException("Creating entry failed, no ID obtained.");
-            }
-        }
-        return entry;
-    }
-
-    private Entry updateEntry(Entry entry) throws SQLException {
-        PreparedStatement pstmt = this.getStatement("update entries set supplier = ?, buy_invoice_no = ?, recipient = ?, supply_date = ?, sell_date = ?, sell_invoice_no = ?, imported_at = ? where serial_no = ?");
-
-        pstmt.setString(1, entry.getSupplier());
-        pstmt.setString(2, entry.getBuyInvoiceNo());
-        pstmt.setString(3, entry.getRecipient());
-        pstmt.setDate(4, new Date(entry.getSupplyDate().getTime()));
-        pstmt.setDate(5, new Date(entry.getSellDate().getTime()));
-        pstmt.setString(6, entry.getSellInvoiceNo());
-        pstmt.setDate(7, new Date(new java.util.Date().getTime()));
-        pstmt.setString(8, entry.getSerialNo());
-        int affectedRows = pstmt.executeUpdate();
-
-        if (affectedRows == 0) {
-            throw new SQLException("Updating entry failed, no rows affected.");
-        }
-
-        return entry;
-    }
-
     @Override
     public Collection<Entry> save(Collection<Entry> entries, boolean updateExisting) {
-        LinkedHashSet<Entry> saved = new LinkedHashSet<>();
-        for (Entry e : entries) {
-            Entry savedEntry = this.save(e, updateExisting);
-            if (savedEntry != null) {
-                saved.add(savedEntry);
+        try {
+            return this.saveCollection(entries, updateExisting);
+        } catch (SQLException ex) {
+            this.log.log("wystąpił błąd podczas zapisywania wpisów: " + entries);
+            this.log.log(ExceptionUtils.getMessage(ex));
+            return null;
+        }
+    }
+
+    private Collection<Entry> saveCollection(Collection<Entry> entries, boolean updateExising) throws SQLException {
+        String mode = updateExising ? "replace" : "ignore";
+        PreparedStatement pstmt = this.getStatement("insert or " + mode + " into entries (serial_no, supplier, buy_invoice_no, recipient, supply_date, sell_date, sell_invoice_no, imported_at) values(?,?,?,?,?,?,?,?)");
+
+        for (Entry entry : entries) {
+            pstmt.setString(1, entry.getSerialNo());
+            pstmt.setString(2, entry.getSupplier());
+            pstmt.setString(3, entry.getBuyInvoiceNo());
+            pstmt.setString(4, entry.getRecipient());
+            pstmt.setDate(5, new Date(entry.getSupplyDate().getTime()));
+            pstmt.setDate(6, new Date(entry.getSellDate().getTime()));
+            pstmt.setString(7, entry.getSellInvoiceNo());
+            pstmt.setDate(8, new Date(new java.util.Date().getTime()));
+            pstmt.addBatch();
+        }
+        pstmt.executeBatch();
+        this.conn.commit();
+
+        try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
+            int i = 0;
+            while (generatedKeys.next()) {
+                for (Entry entry : entries) {
+                    if (entry.getId() == null) {
+                        entry.setId(generatedKeys.getInt(1));
+                    }
+                }
             }
         }
-        return saved;
+        return entries;
     }
 
     @Override
@@ -244,6 +220,7 @@ public final class EntryDaoImpl implements EntryDao {
 
     private PreparedStatement getStatement(String sql) {
         try {
+            this.conn.setAutoCommit(false);
             return this.conn.prepareStatement(sql);
         } catch (SQLException ex) {
             this.log.log("wystąpił błąd podczas przetwarzania zapytania: " + sql);

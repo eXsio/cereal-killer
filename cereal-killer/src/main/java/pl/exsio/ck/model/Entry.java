@@ -31,7 +31,7 @@ public class Entry {
         this.importedAt = new Date();
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
