@@ -114,7 +114,7 @@ public final class EntryDaoImpl implements EntryDao {
             throw new SQLException("Updating entry failed, no rows affected.");
         }
 
-        return this.findOneBySerialNo(entry.getSerialNo());
+        return entry;
     }
 
     @Override
