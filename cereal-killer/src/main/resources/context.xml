@@ -16,12 +16,14 @@
 
     <bean name="mainFrame" class="pl.exsio.ck.main.view.MainFrame">
         <property name="logPanel" ref="logPanel"/>
+        <property name="visible" value="true"/>
     </bean> 
     
     <bean name="logPanel" class="pl.exsio.ck.logging.view.LogPanel">
     </bean>
     
     <bean name="progressFrame" class="pl.exsio.ck.progress.view.ProgressFrame">
+        <property name="visible" value="false"/>
     </bean>
     
     <bean name="browserFrame" class="pl.exsio.ck.browser.view.BrowserFrame" scope="prototype">
@@ -44,6 +46,7 @@
         <property name="entryComparator" ref="entryComparator"/>
         <property name="entryImporter" ref="entryImporter"/>
         <property name="log" ref="logPresenter"/>
+        <property name="dao" ref="entryDao"/>
     </bean> 
     
     <bean name="logPresenter" class="pl.exsio.ck.logging.presenter.LogPresenterImpl">
@@ -62,8 +65,10 @@
     <bean name="entryImporter" class="pl.exsio.ck.importer.EntryImporterImpl">
         <property name="log" ref="logPresenter"/>
         <property name="progress" ref="progressPresenter"/>
+        <property name="dao" ref="entryDao"/>
     </bean>
     <bean name="entryComparator" class="pl.exsio.ck.comparator.EntryComparatorImpl">
         <property name="log" ref="logPresenter"/>
+        <property name="dao" ref="entryDao"/>
     </bean>
 </beans>

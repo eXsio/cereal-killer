@@ -17,6 +17,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import pl.exsio.ck.logging.presenter.LogPresenter;
 import pl.exsio.ck.main.app.App;
 import pl.exsio.ck.model.Entry;
+import pl.exsio.ck.model.dao.EntryDao;
 import pl.exsio.ck.progress.presenter.ProgressPresenter;
 
 public class EntryImporterImpl implements EntryImporter {
@@ -26,6 +27,8 @@ public class EntryImporterImpl implements EntryImporter {
     private LogPresenter log;
 
     private ProgressPresenter progress;
+
+    private EntryDao dao;
 
     @Override
     public void importFile(File file, boolean updateEnabled) {
@@ -53,7 +56,7 @@ public class EntryImporterImpl implements EntryImporter {
                 }
                 rowCounter++;
             }
-            App.getEntryDao().save(entries, updateEnabled);
+            this.dao.save(entries, updateEnabled);
             this.log.log((updateEnabled ? "aktualizacja zakończona" : "import zakończony") + " powodzeniem");
         } catch (IOException ex) {
             this.log.log("nieudana próba otwarcia pliku " + file.getAbsolutePath());
@@ -133,6 +136,10 @@ public class EntryImporterImpl implements EntryImporter {
 
     public void setProgress(ProgressPresenter progress) {
         this.progress = progress;
+    }
+
+    public void setDao(EntryDao dao) {
+        this.dao = dao;
     }
 
 }

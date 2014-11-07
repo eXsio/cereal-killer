@@ -13,6 +13,7 @@ import pl.exsio.ck.importer.EntryImporter;
 import pl.exsio.ck.logging.presenter.LogPresenter;
 import pl.exsio.ck.main.app.App;
 import pl.exsio.ck.main.view.MainFrame;
+import pl.exsio.ck.model.dao.EntryDao;
 import pl.exsio.ck.table.TableAware;
 
 /**
@@ -28,6 +29,8 @@ public class MainPresenterImpl extends TableAware implements MainPresenter {
     private EntryComparator comparator;
 
     private LogPresenter log;
+
+    private EntryDao dao;
 
     public void setView(MainFrame view) {
         this.view = view;
@@ -85,7 +88,7 @@ public class MainPresenterImpl extends TableAware implements MainPresenter {
             public void run() {
                 BrowserFrame browser = getBrowserFrame();
                 EntryTablePresenter presenter = getEntryTablePresenter();
-                presenter.showEntries(App.getEntryDao().findAll());
+                presenter.showEntries(dao.findAll());
                 browser.setLayout(new BorderLayout());
                 browser.add(presenter.getView());
                 browser.setTitle("Przeglądaj zaimportowane wpisy");
@@ -130,6 +133,10 @@ public class MainPresenterImpl extends TableAware implements MainPresenter {
     @Override
     public void setEntryComparator(EntryComparator comparator) {
         this.comparator = comparator;
+    }
+
+    public void setDao(EntryDao dao) {
+        this.dao = dao;
     }
 
     public void setLog(LogPresenter log) {

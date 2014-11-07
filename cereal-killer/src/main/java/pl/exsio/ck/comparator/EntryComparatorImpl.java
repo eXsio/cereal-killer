@@ -19,6 +19,7 @@ import pl.exsio.ck.entrytable.presenter.EntryTablePresenter;
 import pl.exsio.ck.logging.presenter.LogPresenter;
 import pl.exsio.ck.main.app.App;
 import pl.exsio.ck.model.Entry;
+import pl.exsio.ck.model.dao.EntryDao;
 import pl.exsio.ck.serialtable.presenter.SerialTablePresenter;
 import pl.exsio.ck.table.TableAware;
 
@@ -26,10 +27,12 @@ public class EntryComparatorImpl extends TableAware implements EntryComparator {
 
     private LogPresenter log;
 
+    private EntryDao dao;
+
     @Override
     public void compareFile(File file) {
         List<String> serials = getSerialNumbersFromFile(file);
-        final Collection<Entry> entries = App.getEntryDao().findBySerialNos(serials.toArray(new String[serials.size()]));
+        final Collection<Entry> entries = this.dao.findBySerialNos(serials.toArray(new String[serials.size()]));
         final List<String> notFound = this.getNotFoundSerialNumbers(serials, entries);
         this.showCompareWindow(entries, notFound);
     }
@@ -129,6 +132,10 @@ public class EntryComparatorImpl extends TableAware implements EntryComparator {
 
     public void setLog(LogPresenter log) {
         this.log = log;
+    }
+
+    public void setDao(EntryDao dao) {
+        this.dao = dao;
     }
 
 }
