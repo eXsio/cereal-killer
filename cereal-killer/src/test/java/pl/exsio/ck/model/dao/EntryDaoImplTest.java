@@ -1,6 +1,5 @@
 package pl.exsio.ck.model.dao;
 
-import java.awt.Container;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,11 +9,8 @@ import org.junit.After;
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import pl.exsio.ck.logging.presenter.LogPresenter;
-import pl.exsio.ck.logging.view.AbstractLogPanel;
 import pl.exsio.ck.model.Entry;
 
 /**
