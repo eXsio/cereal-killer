@@ -1,8 +1,6 @@
 package pl.exsio.ck.model.dao;
 
-import java.sql.Connection;
 import java.sql.Date;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -10,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -19,7 +16,6 @@ import pl.exsio.ck.logging.presenter.LogPresenter;
 import pl.exsio.ck.main.app.App;
 import pl.exsio.ck.model.Entries;
 import pl.exsio.ck.model.Entry;
-import pl.exsio.ck.model.EntryImpl;
 import pl.exsio.ck.progress.presenter.ProgressPresenter;
 import pl.exsio.ck.util.ArrayUtil;
 
