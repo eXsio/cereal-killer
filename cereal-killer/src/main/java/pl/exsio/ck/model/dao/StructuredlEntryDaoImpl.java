@@ -87,7 +87,7 @@ public final class StructuredlEntryDaoImpl implements EntryDao {
 
     private Collection<Entry> saveCollection(Collection<Entry> entries, boolean updateExising) throws SQLException {
         this.showProgressBar("pracuję...");
-        Map<String, List<Entry>> saveMap = createSaveMap(entries);
+        Map<String, List<Entry>> saveMap = this.createSaveMap(entries);
         for (String digest : saveMap.keySet()) {
             List<Entry> entriesGroup = saveMap.get(digest);
             String[] serials = Entries.getSerials(entriesGroup);
@@ -116,7 +116,7 @@ public final class StructuredlEntryDaoImpl implements EntryDao {
     private void performUpdates(List<String> serialsToUpdate, String digest, Entry entry) throws RuntimeException, SQLException {
         int entryId;
         if (!serialsToUpdate.isEmpty()) {
-            entryId = this.obtainEntryId(digest, entry);
+            entryId = this.obtainEntryIdForDigest(digest, entry);
             PreparedStatement pstmt = this.getStatement("update serials set entry_id = ? where serial_no = ?");
             for (String serial : serialsToUpdate) {
                 pstmt.setInt(1, entryId);
@@ -130,7 +130,7 @@ public final class StructuredlEntryDaoImpl implements EntryDao {
     private void performInserts(List<String> serialsToInsert, String digest, Entry entry) throws SQLException, RuntimeException {
         int entryId;
         if (!serialsToInsert.isEmpty()) {
-            entryId = this.obtainEntryId(digest, entry);
+            entryId = this.obtainEntryIdForDigest(digest, entry);
             PreparedStatement pstmt = this.getStatement("insert into serials (serial_no, entry_id) values (?, ?)");
             for (String serial : serialsToInsert) {
                 pstmt.setString(1, serial);
@@ -141,7 +141,7 @@ public final class StructuredlEntryDaoImpl implements EntryDao {
         }
     }
 
-    private int obtainEntryId(String digest, Entry entry) throws RuntimeException, SQLException {
+    private int obtainEntryIdForDigest(String digest, Entry entry) throws RuntimeException, SQLException {
         int entryId;
         PreparedStatement pstmt = this.getStatement("select id from entries where digest = ?");
         pstmt.setString(1, digest);
