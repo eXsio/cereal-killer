@@ -23,9 +23,13 @@ public class EntryComparatorImpl implements EntryComparator {
 
     @Override
     public ComparisonResult compareFile(File file) {
+        log.log("rozpoczęto porównywanie");
         List<String> serials = this.getSerialNumbersFromFile(file);
         Collection<Entry> entries = this.lookupEntries(serials);
         final List<String> notFound = this.getNotFoundSerialNumbers(serials, entries);
+        log.log("porównywanie zakończone");
+        log.log("znaleziono: "+entries.size());
+        log.log("nieznaleziono: "+notFound.size());
         return new ComparisonResultImpl(entries, notFound);
     }
 
