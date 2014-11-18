@@ -19,7 +19,7 @@ public class ArrayUtil {
 
         List<T[]> list = new ArrayList<T[]>();
 
-        for (int i = 0; i < x; i++) {
+        for (int i = 0; i <= x; i++) {
             upper += max;
             list.add(Arrays.copyOfRange(array, lower, upper));
             lower = upper;
