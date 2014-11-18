@@ -33,10 +33,10 @@
                           <Component id="supplyDateLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="buyInvoiceNoLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="recipientLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="sellDateLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="sellInvoiceNoLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="sellDateLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace type="separate" pref="27" max="32767" attributes="0"/>
+                      <EmptySpace pref="27" max="32767" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="sellInvoiceNoField" min="-2" pref="703" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="1" max="-2" attributes="0">
@@ -88,16 +88,16 @@
                   <Component id="recipientLabel" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="1" attributes="0">
+              <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="selLDateChooser" min="-2" pref="40" max="-2" attributes="0"/>
-                  <Component id="sellDateLabel" min="-2" max="-2" attributes="0"/>
+                  <Component id="sellDateLabel" max="32767" attributes="0"/>
               </Group>
-              <EmptySpace max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="9" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="sellInvoiceNoField" alignment="3" min="-2" pref="40" max="-2" attributes="0"/>
                   <Component id="sellInvoiceNoLabel" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace pref="21" max="32767" attributes="0"/>
+              <EmptySpace type="separate" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" max="-2" attributes="0">
                   <Component id="cancelButton" max="32767" attributes="0"/>
                   <Component id="saveButton" max="32767" attributes="0"/>
