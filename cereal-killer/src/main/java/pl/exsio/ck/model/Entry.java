@@ -26,7 +26,7 @@ public class Entry {
     private String sellInvoiceNo;
 
     private Date importedAt;
-    
+
     public Entry() {
         this.importedAt = new Date();
     }
@@ -125,6 +125,15 @@ public class Entry {
         }
         final Entry other = (Entry) obj;
         return Objects.equals(this.id, other.id);
+    }
+
+    public boolean isDataFilled() {
+        return this.buyInvoiceNo != null
+                && this.recipient != null
+                && this.sellDate != null
+                && this.sellInvoiceNo != null
+                && this.supplier != null
+                && this.supplyDate != null;
     }
 
 }

@@ -53,12 +53,10 @@ public final class EntryDaoImpl implements EntryDao {
 
     @Override
     public Entry save(Entry entry, boolean updateExisting) {
-
-        try {
-            return this.saveCollection(Arrays.asList(new Entry[]{entry}), updateExisting).iterator().next();
-        } catch (SQLException ex) {
-            this.log.log("wystąpił błąd podczas zapisywania wpisu: " + entry);
-            this.log.log(ExceptionUtils.getMessage(ex));
+        Collection<Entry> entries = this.save(Arrays.asList(new Entry[]{entry}), updateExisting);
+        if (entries != null && !entries.isEmpty()) {
+            return entries.iterator().next();
+        } else {
             return null;
         }
     }
@@ -79,15 +77,17 @@ public final class EntryDaoImpl implements EntryDao {
         PreparedStatement pstmt = this.getStatement("insert or " + mode + " into entries (serial_no, supplier, buy_invoice_no, recipient, supply_date, sell_date, sell_invoice_no, imported_at) values(?,?,?,?,?,?,?,?)");
 
         for (Entry entry : entries) {
-            pstmt.setString(1, entry.getSerialNo());
-            pstmt.setString(2, entry.getSupplier());
-            pstmt.setString(3, entry.getBuyInvoiceNo());
-            pstmt.setString(4, entry.getRecipient());
-            pstmt.setDate(5, new Date(entry.getSupplyDate().getTime()));
-            pstmt.setDate(6, new Date(entry.getSellDate().getTime()));
-            pstmt.setString(7, entry.getSellInvoiceNo());
-            pstmt.setDate(8, new Date(new java.util.Date().getTime()));
-            pstmt.addBatch();
+            if (entry.isDataFilled()) {
+                pstmt.setString(1, entry.getSerialNo());
+                pstmt.setString(2, entry.getSupplier());
+                pstmt.setString(3, entry.getBuyInvoiceNo());
+                pstmt.setString(4, entry.getRecipient());
+                pstmt.setDate(5, new Date(entry.getSupplyDate().getTime()));
+                pstmt.setDate(6, new Date(entry.getSellDate().getTime()));
+                pstmt.setString(7, entry.getSellInvoiceNo());
+                pstmt.setDate(8, new Date(new java.util.Date().getTime()));
+                pstmt.addBatch();
+            }
         }
         pstmt.executeBatch();
         this.conn.commit();

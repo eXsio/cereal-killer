@@ -8,5 +8,5 @@ import java.io.File;
  */
 public interface EntryComparator {
 
-    void compareFile(File file);
+    ComparisonResult compareFile(File file);
 }

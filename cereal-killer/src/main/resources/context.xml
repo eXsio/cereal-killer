@@ -31,12 +31,18 @@
         </property>
     </bean>
     
+    <bean name="entryEditorPresenter" class="pl.exsio.ck.editor.presenter.EntryEditorPresenterImpl" scope="prototype">
+        <property name="view">
+            <bean class="pl.exsio.ck.editor.view.EntryEditorFrame"/>
+        </property>
+    </bean>
+    
     <bean name="mainPresenter" class="pl.exsio.ck.main.presenter.MainPresenterImpl">
         <property name="view" ref="mainFrame" />
         <property name="entryComparator" ref="entryComparator"/>
         <property name="entryImporter" ref="entryImporter"/>
-        <property name="log" ref="logPresenter"/>
         <property name="dao" ref="entryDao"/>
+        <property name="reader" ref="entryReader"/>
     </bean> 
     
     <bean name="logPresenter" class="pl.exsio.ck.logging.presenter.LogPresenterImpl">
@@ -54,13 +60,18 @@
     
     <bean name="entryImporter" class="pl.exsio.ck.importer.EntryImporterImpl">
         <property name="log" ref="logPresenter"/>
-        <property name="progress" ref="progressPresenter"/>
         <property name="dao" ref="entryDao"/>
+        <property name="reader" ref="entryReader"/>
     </bean>
     
     <bean name="entryComparator" class="pl.exsio.ck.comparator.EntryComparatorImpl">
         <property name="log" ref="logPresenter"/>
         <property name="dao" ref="entryDao"/>
+        <property name="reader" ref="entryReader"/>
+    </bean>
+    
+    <bean name="entryReader" class="pl.exsio.ck.model.reader.XlsxEntryReaderImpl">
+        <property name="log" ref="logPresenter"/>
         <property name="progress" ref="progressPresenter"/>
     </bean>
 </beans>

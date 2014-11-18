@@ -8,6 +8,7 @@ public class ProgressPresenterImpl implements ProgressPresenter {
 
     private AbstractProgressFrame view;
 
+    @Override
     public void setView(AbstractProgressFrame view) {
         this.view = view;
         view.setPresenter(this);
@@ -46,6 +47,32 @@ public class ProgressPresenterImpl implements ProgressPresenter {
     @Override
     public Container getView() {
         return this.view;
+    }
+
+    @Override
+    public void show() {
+        SwingWorker worker = new SwingWorker() {
+
+            @Override
+            protected Object doInBackground() throws Exception {
+                view.setVisible(true);
+                return null;
+            }
+        };
+        worker.execute();
+    }
+
+    @Override
+    public void hide() {
+        SwingWorker worker = new SwingWorker() {
+
+            @Override
+            protected Object doInBackground() throws Exception {
+                view.setVisible(false);
+                return null;
+            }
+        };
+        worker.execute();
     }
 
 }

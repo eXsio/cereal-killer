@@ -14,4 +14,8 @@ public interface ProgressPresenter extends Presenter {
     void setProgressName(String name);
 
     void setProgress(int percent);
+    
+    void show();
+    
+    void hide();
 }

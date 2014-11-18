@@ -4,14 +4,16 @@ import java.awt.BorderLayout;
 import java.awt.Container;
 import java.io.File;
 import javax.swing.JFileChooser;
+import javax.swing.JTabbedPane;
 import javax.swing.filechooser.FileFilter;
-import org.apache.commons.lang3.exception.ExceptionUtils;
+import pl.exsio.ck.comparator.ComparisonResult;
 import pl.exsio.ck.comparator.EntryComparator;
 import pl.exsio.ck.entrytable.presenter.EntryTablePresenter;
 import pl.exsio.ck.importer.EntryImporter;
-import pl.exsio.ck.logging.presenter.LogPresenter;
 import pl.exsio.ck.main.view.AbstractMainFrame;
 import pl.exsio.ck.model.dao.EntryDao;
+import pl.exsio.ck.model.reader.EntryReader;
+import pl.exsio.ck.serialtable.presenter.SerialTablePresenter;
 import pl.exsio.ck.table.TableAware;
 import pl.exsio.ck.view.AbstractFrame;
 
@@ -27,7 +29,7 @@ public class MainPresenterImpl extends TableAware implements MainPresenter {
 
     private EntryComparator comparator;
 
-    private LogPresenter log;
+    private EntryReader reader;
 
     private EntryDao dao;
 
@@ -39,7 +41,7 @@ public class MainPresenterImpl extends TableAware implements MainPresenter {
 
     @Override
     public void showImportWindow(final boolean updateEnabled) {
-        JFileChooser jfc = this.createFileChooser();
+        JFileChooser jfc = this.createFileChooser("Wczytaj plik do " + (updateEnabled ? "aktualizacji" : "importu"));
         int returnVal = jfc.showOpenDialog(view);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             final File file = jfc.getSelectedFile();
@@ -60,7 +62,7 @@ public class MainPresenterImpl extends TableAware implements MainPresenter {
 
     @Override
     public void showCompareWindow() {
-        JFileChooser jfc = this.createFileChooser();
+        JFileChooser jfc = this.createFileChooser("Wczytaj plik aby porównać");
         int returnVal = jfc.showOpenDialog(view);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             final File file = jfc.getSelectedFile();
@@ -70,7 +72,8 @@ public class MainPresenterImpl extends TableAware implements MainPresenter {
                 @Override
                 public void run() {
                     view.setEnabled(false);
-                    comparator.compareFile(file);
+                    ComparisonResult result = comparator.compareFile(file);
+                    showCompareWindow(result);
                     view.setEnabled(true);
                 }
             });
@@ -107,17 +110,56 @@ public class MainPresenterImpl extends TableAware implements MainPresenter {
         return this.view;
     }
 
-    private JFileChooser createFileChooser() {
+    private void showCompareWindow(final ComparisonResult result) {
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                AbstractFrame browser = getBrowserFrame();
+                JTabbedPane tabs = new JTabbedPane();
+
+                EntryTablePresenter entryPresenter = getEntryTablePresenter();
+                entryPresenter.showEntries(result.getFound());
+
+                SerialTablePresenter serialPresenter = getSerialTablePresenter();
+                serialPresenter.showSerials(result.getNotFound());
+
+                browser.setLayout(new BorderLayout());
+                tabs.add("Znalezione", entryPresenter.getView());
+                tabs.add("Nieznalezione", serialPresenter.getView());
+                browser.add(tabs);
+                browser.setTitle("Porównaj wpisy");
+                browser.pack();
+                browser.showOnScreen(0);
+                browser.setVisible(true);
+            }
+        });
+    }
+
+    private JFileChooser createFileChooser(String title) {
         JFileChooser jfc = new JFileChooser();
+        jfc.setDialogTitle(title);
         jfc.setFileFilter(new FileFilter() {
             @Override
             public boolean accept(File f) {
-                return f.getName().toLowerCase().endsWith(".xlsx") || f.isDirectory();
+                return this.isExtensionValid(f) || f.isDirectory();
+            }
+
+            private boolean isExtensionValid(File file) {
+                for (String extension : reader.getAcceptedFormats().keySet()) {
+                    if (file.getName().toLowerCase().endsWith("." + extension)) {
+                        return true;
+                    }
+                }
+                return false;
             }
 
             @Override
             public String getDescription() {
-                return "Pliki XLSX";
+                StringBuilder sb = new StringBuilder();
+                for (String desc : reader.getAcceptedFormats().values()) {
+                    sb.append(desc).append(", ");
+                }
+                return sb.substring(0, sb.length() - 2);
             }
         });
         jfc.setCurrentDirectory(new File("."));
@@ -138,8 +180,8 @@ public class MainPresenterImpl extends TableAware implements MainPresenter {
         this.dao = dao;
     }
 
-    public void setLog(LogPresenter log) {
-        this.log = log;
+    public void setReader(EntryReader reader) {
+        this.reader = reader;
     }
 
 }
