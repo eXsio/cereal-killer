@@ -48,10 +48,10 @@ public class StructuredlEntryDaoImpl extends SimpleEntryDaoImpl implements Entry
                     serialsToUpdate.add(serial);
                 }
             }
-            Entry entry = entriesGroup.iterator().next();
-            this.performInserts(serialsToInsert, digest, entry);
+            int entryId = this.obtainEntryIdForDigest(digest, entriesGroup.iterator().next());
+            this.performInserts(serialsToInsert, entryId);
             if (updateExising) {
-                this.performUpdates(serialsToUpdate, digest, entry);
+                this.performUpdates(serialsToUpdate, entryId);
             }
 
         }
@@ -60,10 +60,8 @@ public class StructuredlEntryDaoImpl extends SimpleEntryDaoImpl implements Entry
         return entries;
     }
 
-    protected void performUpdates(List<String> serialsToUpdate, String digest, Entry entry) throws RuntimeException, SQLException {
-        int entryId;
+    protected void performUpdates(List<String> serialsToUpdate, int entryId) throws RuntimeException, SQLException {
         if (!serialsToUpdate.isEmpty()) {
-            entryId = this.obtainEntryIdForDigest(digest, entry);
             PreparedStatement pstmt = this.getStatement("update serials set entry_id = ? where serial_no = ?");
             for (String serial : serialsToUpdate) {
                 pstmt.setInt(1, entryId);
@@ -74,10 +72,8 @@ public class StructuredlEntryDaoImpl extends SimpleEntryDaoImpl implements Entry
         }
     }
 
-    protected void performInserts(List<String> serialsToInsert, String digest, Entry entry) throws SQLException, RuntimeException {
-        int entryId;
+    protected void performInserts(List<String> serialsToInsert, int entryId) throws SQLException, RuntimeException {
         if (!serialsToInsert.isEmpty()) {
-            entryId = this.obtainEntryIdForDigest(digest, entry);
             PreparedStatement pstmt = this.getStatement("insert into serials (serial_no, entry_id) values (?, ?)");
             for (String serial : serialsToInsert) {
                 pstmt.setString(1, serial);
