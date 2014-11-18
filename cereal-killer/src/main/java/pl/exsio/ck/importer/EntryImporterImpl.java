@@ -32,21 +32,8 @@ public class EntryImporterImpl implements EntryImporter {
 
     }
 
-    public void setLog(LogPresenter log) {
-        this.log = log;
-    }
-
-    public void setDao(EntryDao dao) {
-        this.dao = dao;
-    }
-
-    public void setReader(EntryReader reader) {
-        this.reader = reader;
-    }
-
     protected void verifyAndSaveEntries(Collection<Entry> entries, final boolean updateEnabled) {
         String[] empty = this.getEmptyEntries(entries);
-        System.out.println(empty.length);
         if (empty.length == 0) {
             doSaveEntries(entries, updateEnabled);
         } else {
@@ -67,7 +54,7 @@ public class EntryImporterImpl implements EntryImporter {
         }
     }
 
-    private void doSaveEntries(Collection<Entry> entries, final boolean updateEnabled) {
+    protected void doSaveEntries(Collection<Entry> entries, final boolean updateEnabled) {
         this.dao.save(entries, updateEnabled);
         this.log.log((updateEnabled ? "aktualizacja zakończona" : "import zakończony"));
     }
@@ -84,6 +71,18 @@ public class EntryImporterImpl implements EntryImporter {
             }
         }
         return empty.toArray(new String[empty.size()]);
+    }
+
+    public void setLog(LogPresenter log) {
+        this.log = log;
+    }
+
+    public void setDao(EntryDao dao) {
+        this.dao = dao;
+    }
+
+    public void setReader(EntryReader reader) {
+        this.reader = reader;
     }
 
 }
