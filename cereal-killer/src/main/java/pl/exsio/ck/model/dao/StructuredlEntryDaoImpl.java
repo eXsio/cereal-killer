@@ -288,7 +288,16 @@ public final class StructuredlEntryDaoImpl implements EntryDao {
     @Override
     public Collection<Entry> findBySerialNos(String[] serialNos) {
         try {
-            StringBuilder sb = new StringBuilder("select * from serials inner join entries on serials.entry_id = entries.id where serials.serial_no in(");
+            StringBuilder sb = new StringBuilder("select "
+                    + "serials.id as id, "
+                    + "entries.recipient as recipient, "
+                    + "entries.buy_invoice_no as buy_invoice_no, "
+                    + "entries.sell_date as sell_date, "
+                    + "entries.sell_invoice_no as sell_invoice_no, "
+                    + "serials.serial_no as serial_no, "
+                    + "entries.supplier as supplier, "
+                    + "entries.supply_date as supply_date "
+                    + "from serials inner join entries on serials.entry_id = entries.id where serials.serial_no in(");
             for (int i = 0; i < serialNos.length; i++) {
                 sb.append("?");
                 if (i < serialNos.length - 1) {
