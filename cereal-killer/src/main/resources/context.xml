@@ -53,7 +53,7 @@
         <property name="view" ref="progressFrame" />
     </bean> 
     
-    <bean name="entryDao" class="pl.exsio.ck.model.dao.EntryDaoImpl">
+    <bean name="entryDao" class="pl.exsio.ck.model.dao.StructuredlEntryDaoImpl">
         <constructor-arg ref="logPresenter"/>
         <constructor-arg value="jdbc:sqlite:database.db"/>
     </bean> 

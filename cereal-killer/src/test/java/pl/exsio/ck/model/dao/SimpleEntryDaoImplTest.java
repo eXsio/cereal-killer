@@ -18,16 +18,16 @@ import pl.exsio.ck.model.EntryImpl;
  *
  * @author exsio
  */
-public class EntryDaoImplTest {
+public class SimpleEntryDaoImplTest {
 
     private EntryDao dao;
 
-    public EntryDaoImplTest() {
+    public SimpleEntryDaoImplTest() {
     }
 
     @Before
     public void setUp() {
-        this.dao = new EntryDaoImpl(getMockLogPresenter(), "jdbc:sqlite:test_database.db");
+        this.dao = new SimpleEntryDaoImpl(getMockLogPresenter(), "jdbc:sqlite:test_database.db");
     }
 
     @After

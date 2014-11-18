@@ -45,5 +45,7 @@ public interface Entry {
     void setSupplier(String supplier);
 
     void setSupplyDate(Date supplyDate);
+    
+    String getDigest();
 
 }

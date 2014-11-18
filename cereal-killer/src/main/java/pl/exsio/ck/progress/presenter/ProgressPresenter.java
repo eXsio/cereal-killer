@@ -15,7 +15,9 @@ public interface ProgressPresenter extends Presenter {
 
     void setProgress(int percent);
     
-    void show();
+    void show(boolean indeterminate);
     
     void hide();
+    
+    
 }

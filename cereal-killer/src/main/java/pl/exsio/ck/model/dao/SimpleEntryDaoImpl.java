@@ -14,7 +14,7 @@ import pl.exsio.ck.logging.presenter.LogPresenter;
 import pl.exsio.ck.model.Entry;
 import pl.exsio.ck.model.EntryImpl;
 
-public final class EntryDaoImpl implements EntryDao {
+public final class SimpleEntryDaoImpl implements EntryDao {
 
     public static final String DRIVER = "org.sqlite.JDBC";
     public static final String DB_URL = "jdbc:sqlite:database.db";
@@ -23,12 +23,12 @@ public final class EntryDaoImpl implements EntryDao {
 
     private LogPresenter log;
 
-    public EntryDaoImpl(LogPresenter log) {
+    public SimpleEntryDaoImpl(LogPresenter log) {
         this(log, DB_URL);
         this.setUp();
     }
 
-    public EntryDaoImpl(LogPresenter log, String dbUrl) {
+    public SimpleEntryDaoImpl(LogPresenter log, String dbUrl) {
         this.log = log;
         this.connect(dbUrl);
         this.setUp();
@@ -37,7 +37,7 @@ public final class EntryDaoImpl implements EntryDao {
     @Override
     public void connect(String url) {
         try {
-            Class.forName(EntryDaoImpl.DRIVER);
+            Class.forName(SimpleEntryDaoImpl.DRIVER);
         } catch (ClassNotFoundException ex) {
             this.log.log("Brak sterownika JDBC");
             this.log.log(ExceptionUtils.getMessage(ex));

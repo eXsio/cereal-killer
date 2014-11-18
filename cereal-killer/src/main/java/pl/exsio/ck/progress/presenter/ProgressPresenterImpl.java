@@ -50,16 +50,19 @@ public class ProgressPresenterImpl implements ProgressPresenter {
     }
 
     @Override
-    public void show() {
-        SwingWorker worker = new SwingWorker() {
+    public void show(final boolean indeterminate) {
 
+        java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
-            protected Object doInBackground() throws Exception {
+            public void run() {
+                view.getBar().setIndeterminate(indeterminate);
+                if(indeterminate) {
+                    view.getBar().setStringPainted(false);
+                }
+                view.showOnScreen(0);
                 view.setVisible(true);
-                return null;
             }
-        };
-        worker.execute();
+        });
     }
 
     @Override

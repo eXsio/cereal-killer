@@ -1,7 +1,9 @@
 package pl.exsio.ck.model;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Objects;
+import org.apache.commons.codec.digest.DigestUtils;
 
 /**
  *
@@ -153,6 +155,16 @@ public class EntryImpl implements Entry {
                 && this.sellInvoiceNo != null
                 && this.supplier != null
                 && this.supplyDate != null;
+    }
+
+    @Override
+    public String getDigest() {
+        if (this.isDataFilled()) {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-mm-dd");
+            return DigestUtils.md5Hex(this.buyInvoiceNo + this.recipient + this.sellInvoiceNo + this.supplier + sdf.format(this.sellDate) + sdf.format(this.supplyDate));
+        } else {
+            return null;
+        }
     }
 
 }

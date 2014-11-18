@@ -64,7 +64,9 @@ public class XlsxEntryReaderImpl implements EntryReader {
                             break;
                         }
                     }
-                    entries.add(e);
+                    if(e.getSerialNo() != null) {
+                        entries.add(e);
+                    }
                 }
                 rowCounter++;
             }
@@ -128,7 +130,7 @@ public class XlsxEntryReaderImpl implements EntryReader {
         }
         this.progress = (ProgressPresenter) App.getContext().getBean("progressPresenter");
         this.progress.setProgressName(progressName);
-        this.progress.show();
+        this.progress.show(false);
     }
 
     private void updateProgressBar(int count, int max) {
@@ -152,10 +154,6 @@ public class XlsxEntryReaderImpl implements EntryReader {
 
     public void setLog(LogPresenter log) {
         this.log = log;
-    }
-
-    public void setProgress(ProgressPresenter progress) {
-        this.progress = progress;
     }
 
 }
