@@ -12,6 +12,7 @@ import java.util.LinkedHashSet;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import pl.exsio.ck.logging.presenter.LogPresenter;
 import pl.exsio.ck.model.Entry;
+import pl.exsio.ck.model.EntryImpl;
 
 public final class EntryDaoImpl implements EntryDao {
 
@@ -202,7 +203,7 @@ public final class EntryDaoImpl implements EntryDao {
     private Collection<Entry> getEntries(ResultSet rs) throws SQLException {
         LinkedHashSet<Entry> entries = new LinkedHashSet<>();
         while (rs.next()) {
-            Entry e = new Entry();
+            Entry e = new EntryImpl();
             e.setId(rs.getInt("id"));
             e.setRecipient(rs.getString("recipient"));
             e.setBuyInvoiceNo(rs.getString("buy_invoice_no"));

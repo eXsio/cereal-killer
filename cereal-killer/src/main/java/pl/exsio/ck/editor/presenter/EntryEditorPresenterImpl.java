@@ -10,6 +10,7 @@ import java.util.Set;
 import javax.swing.JOptionPane;
 import pl.exsio.ck.editor.view.AbstractEntryEditorFrame;
 import pl.exsio.ck.model.Entry;
+import pl.exsio.ck.model.EntryImpl;
 
 public class EntryEditorPresenterImpl implements EntryEditorPresenter {
 
@@ -113,7 +114,7 @@ public class EntryEditorPresenterImpl implements EntryEditorPresenter {
     protected Collection<Entry> createEntries(Map<String, Object> values) {
         List<Entry> entries = new ArrayList<>();
         for (String serial : this.serials) {
-            Entry e = new Entry();
+            Entry e = new EntryImpl();
             e.setSerialNo(serial);
             e.setBuyInvoiceNo((String) values.get(V_BUY_INVOICE_NO));
             e.setRecipient((String) values.get(V_RECIPIENT));

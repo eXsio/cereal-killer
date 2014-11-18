@@ -19,6 +19,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import pl.exsio.ck.logging.presenter.LogPresenter;
 import pl.exsio.ck.main.app.App;
 import pl.exsio.ck.model.Entry;
+import pl.exsio.ck.model.EntryImpl;
 import pl.exsio.ck.progress.presenter.ProgressPresenter;
 
 public class XlsxEntryReaderImpl implements EntryReader {
@@ -55,7 +56,7 @@ public class XlsxEntryReaderImpl implements EntryReader {
                 this.updateProgressBar(rowCounter, sheet.getPhysicalNumberOfRows() - 1);
                 currentRow = rowIterator.next();
                 if (currentRow.getRowNum() > 0) {
-                    Entry e = new Entry();
+                    Entry e = new EntryImpl();
                     Iterator<Cell> cellIterator = currentRow.cellIterator();
                     while (cellIterator.hasNext()) {
                         currentCell = cellIterator.next();

@@ -1,139 +1,49 @@
 package pl.exsio.ck.model;
 
 import java.util.Date;
-import java.util.Objects;
 
 /**
  *
  * @author exsio
  */
-public class Entry {
+public interface Entry {
 
-    private Integer id;
+    String getBuyInvoiceNo();
 
-    private String serialNo;
+    Integer getId();
 
-    private String supplier;
+    Date getImportedAt();
 
-    private String buyInvoiceNo;
+    String getRecipient();
 
-    private String recipient;
+    Date getSellDate();
 
-    private Date supplyDate;
+    String getSellInvoiceNo();
 
-    private Date sellDate;
+    String getSerialNo();
 
-    private String sellInvoiceNo;
+    String getSupplier();
 
-    private Date importedAt;
+    Date getSupplyDate();
 
-    public Entry() {
-        this.importedAt = new Date();
-    }
+    boolean isDataFilled();
 
-    public Integer getId() {
-        return id;
-    }
+    void setBuyInvoiceNo(String buyInvoiceNo);
 
-    public void setId(int id) {
-        this.id = id;
-    }
+    void setId(int id);
 
-    public String getSerialNo() {
-        return serialNo;
-    }
+    void setImportedAt(Date importedAt);
 
-    public void setSerialNo(String serialNo) {
-        this.serialNo = serialNo;
-    }
+    void setRecipient(String recipient);
 
-    public String getSupplier() {
-        return supplier;
-    }
+    void setSellDate(Date sellDate);
 
-    public void setSupplier(String supplier) {
-        this.supplier = supplier;
-    }
+    void setSellInvoiceNo(String sellInvoiceNo);
 
-    public String getBuyInvoiceNo() {
-        return buyInvoiceNo;
-    }
+    void setSerialNo(String serialNo);
 
-    public void setBuyInvoiceNo(String buyInvoiceNo) {
-        this.buyInvoiceNo = buyInvoiceNo;
-    }
+    void setSupplier(String supplier);
 
-    public String getRecipient() {
-        return recipient;
-    }
-
-    public void setRecipient(String recipient) {
-        this.recipient = recipient;
-    }
-
-    public Date getSupplyDate() {
-        return supplyDate;
-    }
-
-    public void setSupplyDate(Date supplyDate) {
-        this.supplyDate = supplyDate;
-    }
-
-    public Date getSellDate() {
-        return sellDate;
-    }
-
-    public void setSellDate(Date sellDate) {
-        this.sellDate = sellDate;
-    }
-
-    public String getSellInvoiceNo() {
-        return sellInvoiceNo;
-    }
-
-    public void setSellInvoiceNo(String sellInvoiceNo) {
-        this.sellInvoiceNo = sellInvoiceNo;
-    }
-
-    public Date getImportedAt() {
-        return importedAt;
-    }
-
-    public void setImportedAt(Date importedAt) {
-        this.importedAt = importedAt;
-    }
-
-    @Override
-    public String toString() {
-        return this.serialNo + " (id: " + this.id + ")";
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 29 * hash + this.id;
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final Entry other = (Entry) obj;
-        return Objects.equals(this.id, other.id);
-    }
-
-    public boolean isDataFilled() {
-        return this.buyInvoiceNo != null
-                && this.recipient != null
-                && this.sellDate != null
-                && this.sellInvoiceNo != null
-                && this.supplier != null
-                && this.supplyDate != null;
-    }
+    void setSupplyDate(Date supplyDate);
 
 }

@@ -12,6 +12,7 @@ import org.junit.Test;
 import static org.mockito.Mockito.mock;
 import pl.exsio.ck.logging.presenter.LogPresenter;
 import pl.exsio.ck.model.Entry;
+import pl.exsio.ck.model.EntryImpl;
 
 /**
  *
@@ -129,7 +130,7 @@ public class EntryDaoImplTest {
     }
 
     private Entry getEntry(int index) {
-        Entry e = new Entry();
+        Entry e = new EntryImpl();
         e.setSerialNo("" + index);
         e.setRecipient("Recipient " + index);
         e.setSellDate(new Date());
