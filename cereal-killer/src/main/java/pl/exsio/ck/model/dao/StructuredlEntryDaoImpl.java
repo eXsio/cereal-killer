@@ -23,69 +23,20 @@ import pl.exsio.ck.model.EntryImpl;
 import pl.exsio.ck.progress.presenter.ProgressPresenter;
 import pl.exsio.ck.util.ArrayUtil;
 
-public final class StructuredlEntryDaoImpl implements EntryDao {
+public class StructuredlEntryDaoImpl extends SimpleEntryDaoImpl implements EntryDao {
 
-    public static final String DRIVER = "org.sqlite.JDBC";
-    
-    public static final String DB_URL = "jdbc:sqlite:database.db";
-
-    private Connection conn;
-
-    private LogPresenter log;
-
-    private ProgressPresenter progress;
+    protected ProgressPresenter progress;
 
     public StructuredlEntryDaoImpl(LogPresenter log) {
-        this(log, DB_URL);
-        this.setUp();
+        super(log);
     }
 
     public StructuredlEntryDaoImpl(LogPresenter log, String dbUrl) {
-        this.log = log;
-        this.connect(dbUrl);
-        this.setUp();
+        super(log, dbUrl);
     }
 
     @Override
-    public void connect(String url) {
-        try {
-            Class.forName(StructuredlEntryDaoImpl.DRIVER);
-        } catch (ClassNotFoundException ex) {
-            this.log.log("Brak sterownika JDBC");
-            this.log.log(ExceptionUtils.getMessage(ex));
-        }
-
-        try {
-            conn = DriverManager.getConnection(url);
-            this.log.log("ustanowiono połączenie z bazą danych (SQLite), url: " + url);
-        } catch (SQLException ex) {
-            this.log.log("Problem z otwarciem polaczenia");
-            this.log.log(ExceptionUtils.getMessage(ex));
-        }
-    }
-
-    @Override
-    public Entry save(Entry entry, boolean updateExisting) {
-        Collection<Entry> entries = this.save(Arrays.asList(new Entry[]{entry}), updateExisting);
-        if (entries != null && !entries.isEmpty()) {
-            return entries.iterator().next();
-        } else {
-            return null;
-        }
-    }
-
-    @Override
-    public Collection<Entry> save(Collection<Entry> entries, boolean updateExisting) {
-        try {
-            return this.saveCollection(entries, updateExisting);
-        } catch (SQLException ex) {
-            this.log.log("wystąpił błąd podczas zapisywania wpisów: " + entries);
-            this.log.log(ExceptionUtils.getMessage(ex));
-            return null;
-        }
-    }
-
-    private Collection<Entry> saveCollection(Collection<Entry> entries, boolean updateExising) throws SQLException {
+    protected Collection<Entry> saveCollection(Collection<Entry> entries, boolean updateExising) throws SQLException {
         this.showProgressBar("pracuję...");
         Map<String, List<Entry>> saveMap = this.createSaveMap(entries);
         for (String digest : saveMap.keySet()) {
@@ -113,7 +64,7 @@ public final class StructuredlEntryDaoImpl implements EntryDao {
         return entries;
     }
 
-    private void performUpdates(List<String> serialsToUpdate, String digest, Entry entry) throws RuntimeException, SQLException {
+    protected void performUpdates(List<String> serialsToUpdate, String digest, Entry entry) throws RuntimeException, SQLException {
         int entryId;
         if (!serialsToUpdate.isEmpty()) {
             entryId = this.obtainEntryIdForDigest(digest, entry);
@@ -127,7 +78,7 @@ public final class StructuredlEntryDaoImpl implements EntryDao {
         }
     }
 
-    private void performInserts(List<String> serialsToInsert, String digest, Entry entry) throws SQLException, RuntimeException {
+    protected void performInserts(List<String> serialsToInsert, String digest, Entry entry) throws SQLException, RuntimeException {
         int entryId;
         if (!serialsToInsert.isEmpty()) {
             entryId = this.obtainEntryIdForDigest(digest, entry);
@@ -141,7 +92,7 @@ public final class StructuredlEntryDaoImpl implements EntryDao {
         }
     }
 
-    private int obtainEntryIdForDigest(String digest, Entry entry) throws RuntimeException, SQLException {
+    protected int obtainEntryIdForDigest(String digest, Entry entry) throws RuntimeException, SQLException {
         int entryId;
         PreparedStatement pstmt = this.getStatement("select id from entries where digest = ?");
         pstmt.setString(1, digest);
@@ -168,7 +119,7 @@ public final class StructuredlEntryDaoImpl implements EntryDao {
         return entryId;
     }
 
-    private List<String> getExistingSerialsFrom(String[] serials) throws SQLException {
+    protected List<String> getExistingSerialsFrom(String[] serials) throws SQLException {
         List<String> existingSerials = new ArrayList<>();
         for (String[] chunk : ArrayUtil.splitArray(serials, Entries.LOOKUP_PAGE_SIZE)) {
             StringBuilder sb = new StringBuilder("select serial_no from serials where serial_no in(");
@@ -191,7 +142,7 @@ public final class StructuredlEntryDaoImpl implements EntryDao {
         return existingSerials;
     }
 
-    private Map<String, List<Entry>> createSaveMap(Collection<Entry> entries) {
+    protected Map<String, List<Entry>> createSaveMap(Collection<Entry> entries) {
         Map<String, List<Entry>> saveMap = new LinkedHashMap<>();
         for (Entry e : entries) {
             String digest = e.getDigest();
@@ -317,57 +268,7 @@ public final class StructuredlEntryDaoImpl implements EntryDao {
     }
 
     @Override
-    public void close() {
-        if (this.conn != null) {
-            try {
-                this.conn.close();
-            } catch (SQLException ex) {
-                this.log.log("Problem z zamknięciem połączenia");
-                this.log.log(ExceptionUtils.getMessage(ex));
-            }
-        }
-    }
-
-    private Entry getEntry(ResultSet rs) throws SQLException {
-
-        Collection<Entry> entries = this.getEntries(rs);
-        if (!entries.isEmpty()) {
-            return entries.iterator().next();
-        } else {
-            return null;
-        }
-    }
-
-    private Collection<Entry> getEntries(ResultSet rs) throws SQLException {
-        LinkedHashSet<Entry> entries = new LinkedHashSet<>();
-        while (rs.next()) {
-            Entry e = new EntryImpl();
-            e.setId(rs.getInt("id"));
-            e.setRecipient(rs.getString("recipient"));
-            e.setBuyInvoiceNo(rs.getString("buy_invoice_no"));
-            e.setSellDate(rs.getDate("sell_date"));
-            e.setSellInvoiceNo(rs.getString("sell_invoice_no"));
-            e.setSerialNo(rs.getString("serial_no"));
-            e.setSupplier(rs.getString("supplier"));
-            e.setSupplyDate(rs.getDate("supply_date"));
-            entries.add(e);
-        }
-        rs.close();
-        return entries;
-    }
-
-    private PreparedStatement getStatement(String sql) {
-        try {
-            this.conn.setAutoCommit(false);
-            return this.conn.prepareStatement(sql);
-        } catch (SQLException ex) {
-            this.log.log("wystąpił błąd podczas przetwarzania zapytania: " + sql);
-            this.log.log(ExceptionUtils.getMessage(ex));
-            return null;
-        }
-    }
-
-    private void setUp() {
+    protected void setUp() {
         try {
 
             List<String> setupQueries = new LinkedList() {
@@ -407,7 +308,7 @@ public final class StructuredlEntryDaoImpl implements EntryDao {
         }
     }
 
-    private void showProgressBar(final String progressName) {
+    protected void showProgressBar(final String progressName) {
         new Thread(new Runnable() {
 
             @Override
@@ -423,7 +324,7 @@ public final class StructuredlEntryDaoImpl implements EntryDao {
 
     }
 
-    private void hideProgressBar() {
+    protected void hideProgressBar() {
         this.progress.hide();
     }
 

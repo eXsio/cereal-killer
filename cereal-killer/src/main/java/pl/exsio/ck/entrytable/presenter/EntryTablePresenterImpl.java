@@ -19,8 +19,6 @@ public class EntryTablePresenterImpl implements EntryTablePresenter {
 
     private final SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd");
 
-    private final SimpleDateFormat datetime = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-
     private TableRowSorter<TableModel> sorter;
 
     @Override
@@ -68,7 +66,7 @@ public class EntryTablePresenterImpl implements EntryTablePresenter {
                     tm.addRow(new Object[]{e.getSerialNo(), e.getSupplier(),
                         date.format(e.getSupplyDate()), e.getBuyInvoiceNo(),
                         e.getRecipient(), date.format(e.getSellDate()),
-                        e.getSellInvoiceNo(), datetime.format(e.getImportedAt()), e.getId()});
+                        e.getSellInvoiceNo(), e.getId()});
 
                 }
                 tm.setRowCount(entries.size());
@@ -108,7 +106,7 @@ public class EntryTablePresenterImpl implements EntryTablePresenter {
                 tm.setColumnIdentifiers(new String[]{
                     "Nr seryjny", "Dostawca", "Data dostawy",
                     "Nr faktury zakupu", "Odbiorca", "Data sprzedaży",
-                    "Nr faktury sprzedaży", "Data importu", "Id", "L.p"
+                    "Nr faktury sprzedaży", "Id", "L.p"
                 });
             }
 

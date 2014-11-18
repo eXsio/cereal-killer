@@ -27,12 +27,6 @@ public class EntryImpl implements Entry {
 
     private String sellInvoiceNo;
 
-    private Date importedAt;
-
-    public EntryImpl() {
-        this.importedAt = new Date();
-    }
-
     @Override
     public Integer getId() {
         return id;
@@ -111,16 +105,6 @@ public class EntryImpl implements Entry {
     @Override
     public void setSellInvoiceNo(String sellInvoiceNo) {
         this.sellInvoiceNo = sellInvoiceNo;
-    }
-
-    @Override
-    public Date getImportedAt() {
-        return importedAt;
-    }
-
-    @Override
-    public void setImportedAt(Date importedAt) {
-        this.importedAt = importedAt;
     }
 
     @Override

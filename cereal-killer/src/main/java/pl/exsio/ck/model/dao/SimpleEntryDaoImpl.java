@@ -14,14 +14,14 @@ import pl.exsio.ck.logging.presenter.LogPresenter;
 import pl.exsio.ck.model.Entry;
 import pl.exsio.ck.model.EntryImpl;
 
-public final class SimpleEntryDaoImpl implements EntryDao {
+public class SimpleEntryDaoImpl implements EntryDao {
 
     public static final String DRIVER = "org.sqlite.JDBC";
     public static final String DB_URL = "jdbc:sqlite:database.db";
 
-    private Connection conn;
+    protected Connection conn;
 
-    private LogPresenter log;
+    protected LogPresenter log;
 
     public SimpleEntryDaoImpl(LogPresenter log) {
         this(log, DB_URL);
@@ -73,9 +73,9 @@ public final class SimpleEntryDaoImpl implements EntryDao {
         }
     }
 
-    private Collection<Entry> saveCollection(Collection<Entry> entries, boolean updateExising) throws SQLException {
+    protected Collection<Entry> saveCollection(Collection<Entry> entries, boolean updateExising) throws SQLException {
         String mode = updateExising ? "replace" : "ignore";
-        PreparedStatement pstmt = this.getStatement("insert or " + mode + " into entries (serial_no, supplier, buy_invoice_no, recipient, supply_date, sell_date, sell_invoice_no, imported_at) values(?,?,?,?,?,?,?,?)");
+        PreparedStatement pstmt = this.getStatement("insert or " + mode + " into entries (serial_no, supplier, buy_invoice_no, recipient, supply_date, sell_date, sell_invoice_no) values(?,?,?,?,?,?,?)");
 
         for (Entry entry : entries) {
             if (entry.isDataFilled()) {
@@ -86,7 +86,6 @@ public final class SimpleEntryDaoImpl implements EntryDao {
                 pstmt.setDate(5, new Date(entry.getSupplyDate().getTime()));
                 pstmt.setDate(6, new Date(entry.getSellDate().getTime()));
                 pstmt.setString(7, entry.getSellInvoiceNo());
-                pstmt.setDate(8, new Date(new java.util.Date().getTime()));
                 pstmt.addBatch();
             }
         }
@@ -190,7 +189,7 @@ public final class SimpleEntryDaoImpl implements EntryDao {
         }
     }
 
-    private Entry getEntry(ResultSet rs) throws SQLException {
+    protected Entry getEntry(ResultSet rs) throws SQLException {
 
         Collection<Entry> entries = this.getEntries(rs);
         if (!entries.isEmpty()) {
@@ -200,7 +199,7 @@ public final class SimpleEntryDaoImpl implements EntryDao {
         }
     }
 
-    private Collection<Entry> getEntries(ResultSet rs) throws SQLException {
+    protected Collection<Entry> getEntries(ResultSet rs) throws SQLException {
         LinkedHashSet<Entry> entries = new LinkedHashSet<>();
         while (rs.next()) {
             Entry e = new EntryImpl();
@@ -209,7 +208,6 @@ public final class SimpleEntryDaoImpl implements EntryDao {
             e.setBuyInvoiceNo(rs.getString("buy_invoice_no"));
             e.setSellDate(rs.getDate("sell_date"));
             e.setSellInvoiceNo(rs.getString("sell_invoice_no"));
-            e.setImportedAt(rs.getDate("imported_at"));
             e.setSerialNo(rs.getString("serial_no"));
             e.setSupplier(rs.getString("supplier"));
             e.setSupplyDate(rs.getDate("supply_date"));
@@ -219,7 +217,7 @@ public final class SimpleEntryDaoImpl implements EntryDao {
         return entries;
     }
 
-    private PreparedStatement getStatement(String sql) {
+    protected PreparedStatement getStatement(String sql) {
         try {
             this.conn.setAutoCommit(false);
             return this.conn.prepareStatement(sql);
@@ -230,9 +228,9 @@ public final class SimpleEntryDaoImpl implements EntryDao {
         }
     }
 
-    private void setUp() {
+    protected void setUp() {
         try {
-            String createEntryTable = "CREATE TABLE IF NOT EXISTS entries (id INTEGER PRIMARY KEY AUTOINCREMENT, serial_no varchar(255) UNIQUE, supplier varchar(255), buy_invoice_no varchar(255), recipient varchar(255), supply_date datetime, sell_date datetime, sell_invoice_no varchar(255), imported_at datetime)";
+            String createEntryTable = "CREATE TABLE IF NOT EXISTS entries (id INTEGER PRIMARY KEY AUTOINCREMENT, serial_no varchar(255) UNIQUE, supplier varchar(255), buy_invoice_no varchar(255), recipient varchar(255), supply_date datetime, sell_date datetime, sell_invoice_no varchar(255))";
             PreparedStatement pstmt = this.conn.prepareStatement(createEntryTable);
             pstmt.execute();
         } catch (SQLException ex) {

@@ -12,8 +12,6 @@ public interface Entry {
 
     Integer getId();
 
-    Date getImportedAt();
-
     String getRecipient();
 
     Date getSellDate();
@@ -31,8 +29,6 @@ public interface Entry {
     void setBuyInvoiceNo(String buyInvoiceNo);
 
     void setId(int id);
-
-    void setImportedAt(Date importedAt);
 
     void setRecipient(String recipient);
 
