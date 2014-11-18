@@ -49,7 +49,7 @@
         <property name="view" ref="logPanel" />
     </bean> 
     
-    <bean name="progressPresenter" class="pl.exsio.ck.progress.presenter.ProgressPresenterImpl">
+    <bean name="progressPresenter" class="pl.exsio.ck.progress.presenter.ProgressPresenterImpl"  scope="prototype">
         <property name="view" ref="progressFrame" />
     </bean> 
     
@@ -72,6 +72,5 @@
     
     <bean name="entryReader" class="pl.exsio.ck.model.reader.XlsxEntryReaderImpl">
         <property name="log" ref="logPresenter"/>
-        <property name="progress" ref="progressPresenter"/>
     </bean>
 </beans>

@@ -1,14 +1,14 @@
 package pl.exsio.ck.editor.view;
 
 import java.util.Map;
-import javax.swing.JFrame;
 import pl.exsio.ck.editor.presenter.EntryEditorPresenter;
+import pl.exsio.ck.view.AbstractFrame;
 
 /**
  *
  * @author exsio
  */
-public abstract class AbstractEntryEditorFrame extends JFrame {
+public abstract class AbstractEntryEditorFrame extends AbstractFrame {
 
     protected EntryEditorPresenter presenter;
 

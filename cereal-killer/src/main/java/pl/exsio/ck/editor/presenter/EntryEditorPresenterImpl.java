@@ -1,8 +1,10 @@
 package pl.exsio.ck.editor.presenter;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.swing.JOptionPane;
@@ -34,14 +36,25 @@ public class EntryEditorPresenterImpl implements EntryEditorPresenter {
     public void show(String[] serials, SaveListener saveListener, CancelListener cancelListener) {
         this.initListeners(saveListener, cancelListener);
         this.serials = serials;
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                view.showOnScreen(0);
+                view.setVisible(true);
+            }
+        });
     }
 
     private void initListeners(SaveListener saveListener, CancelListener cancelListener) {
         this.saveListeners = new LinkedHashSet<>();
         this.cancelListeners = new LinkedHashSet<>();
         this.cancelListeners.add(this.getCloseEditorListener());
-        this.cancelListeners.add(cancelListener);
-        this.saveListeners.add(saveListener);
+        if (cancelListener != null) {
+            this.cancelListeners.add(cancelListener);
+        }
+        if (saveListener != null) {
+            this.saveListeners.add(saveListener);
+        }
     }
 
     private CancelListener getCloseEditorListener() {
@@ -63,7 +76,7 @@ public class EntryEditorPresenterImpl implements EntryEditorPresenter {
             }
             this.closeView();
         } else {
-            JOptionPane.showMessageDialog(null, "ALERT MESSAGE", "TITLE", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this.view, "Proszę wypełnić wszystkie dane", "Uwaga!", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -98,7 +111,7 @@ public class EntryEditorPresenterImpl implements EntryEditorPresenter {
     }
 
     protected Collection<Entry> createEntries(Map<String, Object> values) {
-        Set<Entry> entries = new LinkedHashSet<>();
+        List<Entry> entries = new ArrayList<>();
         for (String serial : this.serials) {
             Entry e = new Entry();
             e.setSerialNo(serial);

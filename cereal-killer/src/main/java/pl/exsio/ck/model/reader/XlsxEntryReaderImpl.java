@@ -17,6 +17,7 @@ import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import pl.exsio.ck.logging.presenter.LogPresenter;
+import pl.exsio.ck.main.app.App;
 import pl.exsio.ck.model.Entry;
 import pl.exsio.ck.progress.presenter.ProgressPresenter;
 
@@ -121,7 +122,10 @@ public class XlsxEntryReaderImpl implements EntryReader {
     }
 
     private void showProgressBar(String progressName) {
-
+        if (this.progress != null) {
+            this.progress.hide();
+        }
+        this.progress = (ProgressPresenter) App.getContext().getBean("progressPresenter");
         this.progress.setProgressName(progressName);
         this.progress.show();
     }

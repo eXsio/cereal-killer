@@ -41,7 +41,7 @@ public class EntryTablePresenterImpl implements EntryTablePresenter {
 
             private void formatColumns(JTable table) {
                 TableColumnModel tcm = table.getColumnModel();
-                tcm.getColumn(0).setPreferredWidth(15);
+                tcm.getColumn(8).setPreferredWidth(15);
                 tcm.getColumn(9).setPreferredWidth(15);
             }
 
@@ -64,13 +64,8 @@ public class EntryTablePresenterImpl implements EntryTablePresenter {
                     }
 
                     @Override
-                    public int getColumnCount() {
-                        return super.getColumnCount();
-                    }
-
-                    @Override
                     public Class getColumnClass(int col) {
-                        if (col == 0 || col == 9) {
+                        if (col == 8 || col == 9) {
                             return Integer.class;
                         } else {
                             return String.class;
@@ -79,10 +74,10 @@ public class EntryTablePresenterImpl implements EntryTablePresenter {
 
                     @Override
                     public Object getValueAt(int row, int col) {
-                        if (col == 0) {
-                            return row;
+                        if (col == this.getColumnCount()-1) {
+                            return row + 1;
                         } else {
-                            return super.getValueAt(row, col - 1);
+                            return super.getValueAt(row, col);
                         }
                     }
                 };
@@ -93,9 +88,9 @@ public class EntryTablePresenterImpl implements EntryTablePresenter {
 
             private void setTableHeaders(DefaultTableModel tm) {
                 tm.setColumnIdentifiers(new String[]{
-                    "L.p", "Nr seryjny", "Dostawca", "Data dostawy",
+                    "Nr seryjny", "Dostawca", "Data dostawy",
                     "Nr faktury zakupu", "Odbiorca", "Data sprzedaży",
-                    "Nr faktury sprzedaży", "Data importu", "Id"
+                    "Nr faktury sprzedaży", "Data importu", "Id", "L.p"
                 });
             }
 

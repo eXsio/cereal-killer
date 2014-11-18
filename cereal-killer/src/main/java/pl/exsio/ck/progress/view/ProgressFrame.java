@@ -30,7 +30,6 @@ public class ProgressFrame extends AbstractProgressFrame {
         bar = new javax.swing.JProgressBar();
         name = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setUndecorated(true);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
