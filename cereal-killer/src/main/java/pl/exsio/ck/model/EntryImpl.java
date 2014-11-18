@@ -145,7 +145,13 @@ public class EntryImpl implements Entry {
     public String getDigest() {
         if (this.isDataFilled()) {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-mm-dd");
-            return DigestUtils.md5Hex(this.buyInvoiceNo + this.recipient + this.sellInvoiceNo + this.supplier + sdf.format(this.sellDate) + sdf.format(this.supplyDate));
+            return DigestUtils.md5Hex(
+                    this.buyInvoiceNo.toLowerCase()
+                    + this.recipient.toLowerCase()
+                    + this.sellInvoiceNo.toLowerCase()
+                    + this.supplier.toLowerCase()
+                    + sdf.format(this.sellDate)
+                    + sdf.format(this.supplyDate));
         } else {
             return null;
         }
