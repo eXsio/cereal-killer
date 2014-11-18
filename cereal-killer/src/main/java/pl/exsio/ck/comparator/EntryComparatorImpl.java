@@ -6,6 +6,7 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import pl.exsio.ck.logging.presenter.LogPresenter;
+import pl.exsio.ck.model.Entries;
 import pl.exsio.ck.model.Entry;
 import pl.exsio.ck.model.dao.EntryDao;
 import pl.exsio.ck.model.reader.EntryReader;
@@ -18,8 +19,6 @@ public class EntryComparatorImpl implements EntryComparator {
     private EntryDao dao;
 
     private EntryReader reader;
-
-    private final static int LOOKUP_PAGE_SIZE = 200;
 
     @Override
     public ComparisonResult compareFile(File file) {
@@ -47,7 +46,7 @@ public class EntryComparatorImpl implements EntryComparator {
     private Collection<Entry> lookupEntries(List<String> serials) {
         String[] serialsArr = serials.toArray(new String[serials.size()]);
         LinkedHashSet<Entry> entries = new LinkedHashSet<>();
-        for (String[] chunk : ArrayUtil.splitArray(serialsArr, LOOKUP_PAGE_SIZE)) {
+        for (String[] chunk : ArrayUtil.splitArray(serialsArr, Entries.LOOKUP_PAGE_SIZE)) {
             entries.addAll(this.dao.findBySerialNos(chunk));
         }
         return entries;

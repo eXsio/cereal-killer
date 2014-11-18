@@ -26,8 +26,8 @@ import pl.exsio.ck.util.ArrayUtil;
 public final class StructuredlEntryDaoImpl implements EntryDao {
 
     public static final String DRIVER = "org.sqlite.JDBC";
+    
     public static final String DB_URL = "jdbc:sqlite:database.db";
-    private final static int LOOKUP_PAGE_SIZE = 200;
 
     private Connection conn;
 
@@ -170,7 +170,7 @@ public final class StructuredlEntryDaoImpl implements EntryDao {
 
     private List<String> getExistingSerialsFrom(String[] serials) throws SQLException {
         List<String> existingSerials = new ArrayList<>();
-        for (String[] chunk : ArrayUtil.splitArray(serials, LOOKUP_PAGE_SIZE)) {
+        for (String[] chunk : ArrayUtil.splitArray(serials, Entries.LOOKUP_PAGE_SIZE)) {
             StringBuilder sb = new StringBuilder("select serial_no from serials where serial_no in(");
             for (int i = 0; i < chunk.length; i++) {
                 sb.append("?");

@@ -14,6 +14,8 @@ import java.util.List;
  * @author sdymi_000
  */
 public class Entries {
+    
+    public static final int LOOKUP_PAGE_SIZE = 200;
 
     public static String[] getSerials(Collection<Entry> entries) {
         List<String> serials = new ArrayList<>();
