@@ -4,9 +4,12 @@ import java.awt.Container;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import javax.swing.JTable;
+import javax.swing.RowFilter;
 import javax.swing.SwingWorker;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 import pl.exsio.ck.entrytable.view.AbstractEntryTablePanel;
 import pl.exsio.ck.model.Entry;
 
@@ -18,10 +21,23 @@ public class EntryTablePresenterImpl implements EntryTablePresenter {
 
     private final SimpleDateFormat datetime = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
+    private TableRowSorter<TableModel> sorter;
+
     @Override
     public void setView(AbstractEntryTablePanel view) {
         this.view = view;
         view.setPresenter(this);
+    }
+
+    @Override
+    public void filter(String filterStr) {
+        if (this.sorter != null) {
+            if (filterStr.trim().length() == 0) {
+                this.sorter.setRowFilter(null);
+            } else {
+                this.sorter.setRowFilter(RowFilter.regexFilter(filterStr.trim()));
+            }
+        }
     }
 
     @Override
@@ -36,6 +52,8 @@ public class EntryTablePresenterImpl implements EntryTablePresenter {
                 this.fillTableData(tm);
                 table.setModel(tm);
                 this.formatColumns(table);
+                sorter = new TableRowSorter<TableModel>(tm);
+                table.setRowSorter(sorter);
                 return null;
             }
 
@@ -74,7 +92,7 @@ public class EntryTablePresenterImpl implements EntryTablePresenter {
 
                     @Override
                     public Object getValueAt(int row, int col) {
-                        if (col == this.getColumnCount()-1) {
+                        if (col == this.getColumnCount() - 1) {
                             return row + 1;
                         } else {
                             return super.getValueAt(row, col);
