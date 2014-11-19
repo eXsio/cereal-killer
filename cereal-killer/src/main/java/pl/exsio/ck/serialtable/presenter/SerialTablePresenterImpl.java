@@ -34,7 +34,7 @@ public class SerialTablePresenterImpl implements SerialTablePresenter {
     }
 
     @Override
-    public void showSerials(final Collection<String> serials) {
+    public void showSerials(final String[] serials) {
 
         SwingWorker worker = new SwingWorker() {
 
@@ -53,7 +53,7 @@ public class SerialTablePresenterImpl implements SerialTablePresenter {
                 for (String s : serials) {
                     tm.addRow(new Object[]{s});
                 }
-                tm.setRowCount(serials.size());
+                tm.setRowCount(serials.length);
             }
 
             private DefaultTableModel createTableModel() {

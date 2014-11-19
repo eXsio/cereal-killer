@@ -25,7 +25,7 @@ public class EntryImporterImpl implements EntryImporter {
     public void importFile(File file, boolean updateEnabled) {
 
         this.log.log("rozpoczynam " + (updateEnabled ? "aktualizację" : "import"));
-        Collection<Entry> entries = this.reader.readEntries(file, (updateEnabled ? "aktualizacja" : "import") + " w toku...");
+        Collection<Entry> entries = this.reader.readEntries(file, (updateEnabled ? "aktualizacja" : "import") + " w toku...", false);
         if (entries != null && !entries.isEmpty()) {
             this.verifyAndSaveEntries(entries, updateEnabled);
         }

@@ -89,7 +89,7 @@ public class MainPresenterImpl extends TableAware implements MainPresenter {
             public void run() {
                 AbstractFrame browser = getBrowserFrame();
                 EntryTablePresenter presenter = getEntryTablePresenter();
-                presenter.showEntries(dao.findAll());
+                presenter.showEntries();
                 browser.setLayout(new BorderLayout());
                 browser.add(presenter.getView());
                 browser.setTitle("Przeglądaj zaimportowane wpisy");

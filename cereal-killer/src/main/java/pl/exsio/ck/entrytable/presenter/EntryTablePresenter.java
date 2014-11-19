@@ -2,7 +2,6 @@ package pl.exsio.ck.entrytable.presenter;
 
 import java.util.Collection;
 import pl.exsio.ck.entrytable.view.AbstractEntryTablePanel;
-import pl.exsio.ck.model.Entry;
 import pl.exsio.ck.presenter.Presenter;
 
 /**
@@ -12,8 +11,10 @@ import pl.exsio.ck.presenter.Presenter;
 public interface EntryTablePresenter extends Presenter {
 
     void setView(AbstractEntryTablePanel view);
+    
+    void showEntries();
 
-    void showEntries(Collection<Entry> entries);
+    void showEntries(String[] serials);
 
     void filter(String filterStr);
 }

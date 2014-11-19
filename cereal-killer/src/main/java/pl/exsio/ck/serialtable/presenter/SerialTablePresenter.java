@@ -12,7 +12,7 @@ public interface SerialTablePresenter extends Presenter {
     
     void setView(AbstractSerialTablePanel view);
     
-    void showSerials(Collection<String> serials);
+    void showSerials(String[] serials);
     
     void filter(String filterStr);
 }

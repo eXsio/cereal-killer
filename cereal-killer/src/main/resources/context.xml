@@ -23,6 +23,7 @@
         <property name="view">
             <bean class="pl.exsio.ck.entrytable.view.EntryTablePanel"/>
         </property>
+        <property name="dao" ref="entryDao"/>
     </bean>
     
     <bean name="serialTablePresenter" class="pl.exsio.ck.serialtable.presenter.SerialTablePresenterImpl" scope="prototype">
@@ -53,9 +54,9 @@
         <property name="view" ref="progressFrame" />
     </bean> 
     
-    <bean name="entryDao" class="pl.exsio.ck.model.dao.StructuredlEntryDaoImpl">
+    <bean name="entryDao" class="pl.exsio.ck.model.dao.EntryDaoImpl">
         <constructor-arg ref="logPresenter"/>
-        <constructor-arg value="jdbc:sqlite:database.db"/>
+        <constructor-arg value="jdbc:hsqldb:database_hsql.db"/>
     </bean> 
     
     <bean name="entryImporter" class="pl.exsio.ck.importer.EntryImporterImpl">

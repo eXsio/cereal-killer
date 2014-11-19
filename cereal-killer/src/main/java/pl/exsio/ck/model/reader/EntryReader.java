@@ -11,7 +11,7 @@ import pl.exsio.ck.model.Entry;
  */
 public interface EntryReader {
 
-    Collection<Entry> readEntries(File file, String progressName);
+    Collection<Entry> readEntries(File file, String progressName, boolean serialsOnly);
 
     Map<String, String> getAcceptedFormats();
 }

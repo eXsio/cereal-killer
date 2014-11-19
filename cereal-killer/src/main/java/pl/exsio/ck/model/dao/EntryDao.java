@@ -1,5 +1,6 @@
 package pl.exsio.ck.model.dao;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import pl.exsio.ck.model.Entry;
 
@@ -8,6 +9,10 @@ import pl.exsio.ck.model.Entry;
  * @author exsio
  */
 public interface EntryDao {
+
+    String SORT_DESC = "desc";
+
+    String SORT_ASC = "asc";
 
     Entry save(Entry entry, boolean updateExisting);
 
@@ -26,4 +31,12 @@ public interface EntryDao {
     void connect(String url);
 
     void close();
+
+    ArrayList<Object[]> fetchTableRows(int limit, int offset, String query, String orderBy, String orderDir, String[] serials);
+
+    int countAll();
+
+    int count(String query, String[] serials);
+
+    String[] findExistingSerialsBy(String[] serials);
 }

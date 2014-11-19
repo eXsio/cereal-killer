@@ -40,7 +40,7 @@ public class XlsxEntryReaderImpl implements EntryReader {
     }
 
     @Override
-    public Collection<Entry> readEntries(File file, String progressName) {
+    public Collection<Entry> readEntries(File file, String progressName, boolean serialsOnly) {
         this.showProgressBar(progressName);
         Row currentRow = null;
         Cell currentCell = null;
@@ -60,11 +60,11 @@ public class XlsxEntryReaderImpl implements EntryReader {
                     Iterator<Cell> cellIterator = currentRow.cellIterator();
                     while (cellIterator.hasNext()) {
                         currentCell = cellIterator.next();
-                        if (!this.fillEntryField(currentCell, e)) {
+                        if (!this.fillEntryField(currentCell, e, serialsOnly)) {
                             break;
                         }
                     }
-                    if(e.getSerialNo() != null) {
+                    if (e.getSerialNo() != null) {
                         entries.add(e);
                     }
                 }
@@ -89,34 +89,41 @@ public class XlsxEntryReaderImpl implements EntryReader {
         return sheet;
     }
 
-    private boolean fillEntryField(Cell currentCell, Entry e) throws ParseException {
+    private boolean fillEntryField(Cell currentCell, Entry e, boolean serialsOnly) throws ParseException {
         String value = this.getStringValue(currentCell);
         if (value != null && !value.equals("")) {
-            switch (currentCell.getColumnIndex()) {
-                case 0:
+            if (serialsOnly) {
+                if (currentCell.getColumnIndex() == 0) {
                     e.setSerialNo(value);
-                    break;
-                case 1:
-                    e.setSupplier(value);
-                    break;
-                case 2:
-                    e.setSupplyDate(sdf.parse(value));
-                    break;
-                case 3:
-                    e.setBuyInvoiceNo(value);
-                    break;
-                case 4:
-                    e.setRecipient(value);
-                    break;
-                case 5:
-                    e.setSellDate(sdf.parse(value));
-                    break;
-                case 6:
-                    e.setSellInvoiceNo(value);
-                    break;
-                default:
-                    break;
+                }
+            } else {
+                switch (currentCell.getColumnIndex()) {
+                    case 0:
+                        e.setSerialNo(value);
+                        break;
+                    case 1:
+                        e.setSupplier(value);
+                        break;
+                    case 2:
+                        e.setSupplyDate(sdf.parse(value));
+                        break;
+                    case 3:
+                        e.setBuyInvoiceNo(value);
+                        break;
+                    case 4:
+                        e.setRecipient(value);
+                        break;
+                    case 5:
+                        e.setSellDate(sdf.parse(value));
+                        break;
+                    case 6:
+                        e.setSellInvoiceNo(value);
+                        break;
+                    default:
+                        break;
+                }
             }
+
             return true;
         } else {
             return false;

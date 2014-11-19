@@ -6,7 +6,6 @@
 package pl.exsio.ck.comparator;
 
 import java.util.Collection;
-import pl.exsio.ck.model.Entry;
 
 /**
  *
@@ -14,7 +13,7 @@ import pl.exsio.ck.model.Entry;
  */
 public interface ComparisonResult {
 
-    Collection<Entry> getFound();
+    String[] getFound();
 
-    Collection<String> getNotFound();
+    String[] getNotFound();
 }
