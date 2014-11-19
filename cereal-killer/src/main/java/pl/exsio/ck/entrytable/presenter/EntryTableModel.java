@@ -5,7 +5,7 @@
  */
 package pl.exsio.ck.entrytable.presenter;
 
-import java.util.ArrayList;
+import java.util.TreeMap;
 import javax.swing.table.DefaultTableModel;
 import static pl.exsio.ck.entrytable.presenter.EntryTableModel.PAGE_SIZE;
 import pl.exsio.ck.model.dao.EntryDao;
@@ -17,7 +17,9 @@ import pl.exsio.ck.model.dao.EntryDao;
 public class EntryTableModel extends DefaultTableModel {
 
     protected static final int PAGE_SIZE = 100;
-    
+
+    protected static final int CACHE_SIZE = 1000;
+
     protected static int i = 0;
 
     protected final EntryDao dao;
@@ -30,7 +32,7 @@ public class EntryTableModel extends DefaultTableModel {
 
     protected final String orderDesc;
 
-    protected ArrayList<Object[]> cache;
+    protected final TreeMap<Integer, Object[]> cache;
 
     protected Integer rowCount;
 
@@ -49,6 +51,7 @@ public class EntryTableModel extends DefaultTableModel {
         this.serials = serials;
         this.query = query;
         this.orderDesc = orderDesc;
+        this.cache = new TreeMap<>();
         this.orderBy = orderBy;
         this.getItems(startPosition, startPosition + PAGE_SIZE);
         this.setColumnIdentifiers(new String[]{
@@ -59,10 +62,26 @@ public class EntryTableModel extends DefaultTableModel {
     }
 
     protected final void getItems(int from, int to) {
-        System.out.println("loading items "+from+" - "+to);
-        i++;
-        System.out.println("loads: "+ i);
-        this.cache = this.dao.fetchTableRows(to - from, from, this.query, this.orderBy, this.orderDesc, this.serials);
+        int rowCounter = from;
+        if (this.cache.size() > CACHE_SIZE) {
+            this.cache.clear();
+        }
+        if (!this.inCache(from, to)) {
+            for (Object[] row : this.dao.fetchTableRows(to - from, from, this.query, this.orderBy, this.orderDesc, this.serials)) {
+                this.cache.put(rowCounter, row);
+                rowCounter++;
+            }
+        }
+
+    }
+
+    private boolean inCache(int from, int to) {
+        for (int i = from; i <= to; i++) {
+            if (!cache.containsKey(i)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override
@@ -73,12 +92,12 @@ public class EntryTableModel extends DefaultTableModel {
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
 
-            if ((rowIndex < startPosition) || (rowIndex >= (startPosition + PAGE_SIZE))) {
-                this.getItems(rowIndex, rowIndex + PAGE_SIZE);
-                this.startPosition = rowIndex;
-            }
-            return this.cache.get(rowIndex - startPosition)[columnIndex];
-        
+        if (!this.cache.containsKey(rowIndex)) {
+            this.getItems(rowIndex, rowIndex + PAGE_SIZE);
+        }
+
+        return this.cache.get(rowIndex)[columnIndex];
+
     }
 
     @Override

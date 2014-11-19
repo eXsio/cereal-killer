@@ -348,7 +348,7 @@ public final class EntryDaoImpl implements EntryDao {
     }
 
     private void bindTableSearchQueryToStatement(PreparedStatement pstmt, String query) throws SQLException {
-        query = "%" + query;
+        query = "%" + query + "%";
         pstmt.setString(1, query);
         pstmt.setString(2, query);
         pstmt.setString(3, query);
