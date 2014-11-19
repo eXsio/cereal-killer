@@ -1,7 +1,6 @@
 package pl.exsio.ck.entrytable.presenter;
 
 import java.awt.Container;
-import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JTable;
@@ -14,8 +13,6 @@ import pl.exsio.ck.model.dao.EntryDao;
 public class EntryTablePresenterImpl implements EntryTablePresenter {
 
     private AbstractEntryTablePanel view;
-
-    private final SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd");
 
     protected EntryDao dao;
 
@@ -45,13 +42,13 @@ public class EntryTablePresenterImpl implements EntryTablePresenter {
     @Override
     public void filter(String query) {
 
-        if (query.trim().length() == 0) {
+        if (query == null || query.trim().length() == 0) {
             this.query = null;
         } else {
             this.query = query;
         }
         this.showData("id", sortDir, null);
-
+        
     }
 
     @Override

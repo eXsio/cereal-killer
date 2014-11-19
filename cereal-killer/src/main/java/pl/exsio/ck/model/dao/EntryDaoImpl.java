@@ -68,16 +68,6 @@ public final class EntryDaoImpl implements EntryDao {
     }
 
     @Override
-    public Entry save(Entry entry, boolean updateExisting) {
-        Collection<Entry> entries = this.save(Arrays.asList(new Entry[]{entry}), updateExisting);
-        if (entries != null && !entries.isEmpty()) {
-            return entries.iterator().next();
-        } else {
-            return null;
-        }
-    }
-
-    @Override
     public Collection<Entry> save(Collection<Entry> entries, boolean updateExisting) {
         try {
             return this.saveCollection(entries, updateExisting);
@@ -94,7 +84,7 @@ public final class EntryDaoImpl implements EntryDao {
         for (String digest : saveMap.keySet()) {
             List<Entry> entriesGroup = saveMap.get(digest);
             String[] serials = Entries.getSerials(entriesGroup);
-            List<String> existingSerials = Arrays.asList(this.findExistingSerialsBy(serials));
+            List<String> existingSerials = Arrays.asList(this.matchSerials(serials));
             List<String> serialsToInsert = new ArrayList<>();
             List<String> serialsToUpdate = new ArrayList<>();
             for (String serial : serials) {
@@ -168,7 +158,7 @@ public final class EntryDaoImpl implements EntryDao {
     }
 
     @Override
-    public String[] findExistingSerialsBy(String[] serials) {
+    public String[] matchSerials(String[] serials) {
         try {
             List<String> existingSerials = new ArrayList<>();
             PreparedStatement pstmt = this.getStatement("select serial_no from serials where serial_no in(UNNEST(?))");
@@ -201,106 +191,6 @@ public final class EntryDaoImpl implements EntryDao {
             entriesGroup.add(e);
         }
         return saveMap;
-    }
-
-    @Override
-    public void clear() {
-        try {
-            PreparedStatement pstmt = this.getStatement("delete from serials");
-            pstmt.executeUpdate();
-            pstmt = this.getStatement("delete from entries");
-            pstmt.executeUpdate();
-        } catch (SQLException ex) {
-            this.log.log("wystąpił błąd podczas czyszczenia tabeli");
-            this.log.log(ExceptionUtils.getMessage(ex));
-        }
-    }
-
-    @Override
-    public Entry findOne(int id) {
-        try {
-            PreparedStatement pstmt = this.getStatement("select "
-                    + "serials.id as id, "
-                    + "entries.recipient as recipient, "
-                    + "entries.buy_invoice_no as buy_invoice_no, "
-                    + "entries.sell_date as sell_date, "
-                    + "entries.sell_invoice_no as sell_invoice_no, "
-                    + "serials.serial_no as serial_no, "
-                    + "entries.supplier as supplier, "
-                    + "entries.supply_date as supply_date "
-                    + "from serials inner join entries on serials.entry_id = entries.id where serials.id = ?");
-            pstmt.setInt(1, id);
-            return this.getEntry(pstmt.executeQuery());
-        } catch (SQLException ex) {
-            this.log.log("wystąpił błąd podczas wyszukania wpisu: " + id);
-            this.log.log(ExceptionUtils.getMessage(ex));
-            return null;
-        }
-    }
-
-    @Override
-    public Entry findOneBySerialNo(String serialNo) {
-        try {
-            PreparedStatement pstmt = this.getStatement("select "
-                    + "serials.id as id, "
-                    + "entries.recipient as recipient, "
-                    + "entries.buy_invoice_no as buy_invoice_no, "
-                    + "entries.sell_date as sell_date, "
-                    + "entries.sell_invoice_no as sell_invoice_no, "
-                    + "serials.serial_no as serial_no, "
-                    + "entries.supplier as supplier, "
-                    + "entries.supply_date as supply_date "
-                    + "from serials inner join entries on serials.entry_id = entries.id where serials.serial_no = ?");
-            pstmt.setString(1, serialNo);
-            return this.getEntry(pstmt.executeQuery());
-        } catch (SQLException ex) {
-            this.log.log("wystąpił błąd podczas wyszukania wpisu: " + serialNo);
-            this.log.log(ExceptionUtils.getMessage(ex));
-            return null;
-        }
-    }
-
-    @Override
-    public Collection<Entry> findAll() {
-        try {
-            PreparedStatement pstmt = this.getStatement("select "
-                    + "serials.id as id, "
-                    + "entries.recipient as recipient, "
-                    + "entries.buy_invoice_no as buy_invoice_no, "
-                    + "entries.sell_date as sell_date, "
-                    + "entries.sell_invoice_no as sell_invoice_no, "
-                    + "serials.serial_no as serial_no, "
-                    + "entries.supplier as supplier, "
-                    + "entries.supply_date as supply_date "
-                    + "from serials inner join entries on serials.entry_id = entries.id");
-            return this.getEntries(pstmt.executeQuery());
-        } catch (SQLException ex) {
-            this.log.log("wystąpił błąd podczas wyszukania wpisów");
-            this.log.log(ExceptionUtils.getMessage(ex));
-            return null;
-        }
-    }
-
-    @Override
-    public Collection<Entry> findBySerialNos(String[] serialNos) {
-        try {
-            PreparedStatement pstmt = this.getStatement("select "
-                    + "serials.id as id, "
-                    + "entries.recipient as recipient, "
-                    + "entries.buy_invoice_no as buy_invoice_no, "
-                    + "entries.sell_date as sell_date, "
-                    + "entries.sell_invoice_no as sell_invoice_no, "
-                    + "serials.serial_no as serial_no, "
-                    + "entries.supplier as supplier, "
-                    + "entries.supply_date as supply_date "
-                    + "from serials inner join entries on serials.entry_id = entries.id where serials.serial_no in(UNNEST(?))");
-            pstmt.setObject(1, serialNos);
-            return this.getEntries(pstmt.executeQuery());
-        } catch (SQLException ex) {
-            this.log.log("wystąpił błąd podczas wyszukania wpisów: " + Arrays.toString(serialNos));
-            this.log.log(ExceptionUtils.getMessage(ex));
-            return null;
-        }
     }
 
     @Override
@@ -407,24 +297,6 @@ public final class EntryDaoImpl implements EntryDao {
                     + "serials.serial_no like ?)";
         }
         return q;
-    }
-
-    @Override
-    public int countAll() {
-        try {
-            PreparedStatement pstmt = this.getStatement("select count(*) "
-                    + "from serials inner join entries on serials.entry_id = entries.id");
-            ResultSet result = pstmt.executeQuery();
-            if (result.next()) {
-                return result.getInt(1);
-            } else {
-                return -1;
-            }
-        } catch (SQLException ex) {
-            this.log.log("wystąpił błąd podczas wyszukania wpisów");
-            this.log.log(ExceptionUtils.getMessage(ex));
-            return -1;
-        }
     }
 
     @Override
@@ -590,7 +462,13 @@ public final class EntryDaoImpl implements EntryDao {
     }
 
     protected void hideProgressBar() {
-        this.progress.hide();
+        new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                progress.hide();
+            }
+        }).start();
     }
 
 }

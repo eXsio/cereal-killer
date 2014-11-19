@@ -47,7 +47,7 @@ public class EntryComparatorImpl implements EntryComparator {
 
     private String[] getFoundSerialNumbers(String[] serials) {
         this.log.log("przetwarzam znalezione");
-        return this.dao.findExistingSerialsBy(serials);
+        return this.dao.matchSerials(serials);
     }
 
     private String[] getNotFoundSerialNumbers(String[] serials, String[] foundSerials) {
@@ -65,6 +65,7 @@ public class EntryComparatorImpl implements EntryComparator {
                 @Override
                 public void run() {
                     List<String> workerList = new ArrayList<>(Arrays.asList(serialsChunk));
+                    workerList.removeAll(Collections.singleton(null));
                     workerList.removeAll(foundList);
                     notFoundList.addAll(workerList);
                 }
@@ -82,7 +83,6 @@ public class EntryComparatorImpl implements EntryComparator {
             }
         }
 
-        notFoundList.removeAll(Collections.singleton(null));
         return notFoundList.toArray(new String[notFoundList.size()]);
     }
 

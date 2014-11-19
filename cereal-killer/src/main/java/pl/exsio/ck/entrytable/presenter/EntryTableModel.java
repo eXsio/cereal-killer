@@ -18,7 +18,7 @@ public class EntryTableModel extends DefaultTableModel {
 
     protected static final int PAGE_SIZE = 100;
 
-    protected static final int CACHE_SIZE = 1000;
+    protected static final int CACHE_SIZE = 5000;
 
     protected static int i = 0;
 
@@ -62,6 +62,7 @@ public class EntryTableModel extends DefaultTableModel {
     }
 
     protected final void getItems(int from, int to) {
+
         int rowCounter = from;
         if (this.cache.size() > CACHE_SIZE) {
             this.cache.clear();
@@ -72,7 +73,6 @@ public class EntryTableModel extends DefaultTableModel {
                 rowCounter++;
             }
         }
-
     }
 
     private boolean inCache(int from, int to) {
@@ -90,13 +90,23 @@ public class EntryTableModel extends DefaultTableModel {
     }
 
     @Override
+    public boolean isCellEditable(int row, int column) {
+        return false;
+    }
+
+    @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
 
         if (!this.cache.containsKey(rowIndex)) {
             this.getItems(rowIndex, rowIndex + PAGE_SIZE);
         }
-
-        return this.cache.get(rowIndex)[columnIndex];
+        Object[] row = this.cache.get(rowIndex);
+        if(row != null) {
+            return row[columnIndex];
+        } else {
+            return "";
+        }
+        
 
     }
 
@@ -108,6 +118,7 @@ public class EntryTableModel extends DefaultTableModel {
         if (this.rowCount == null) {
             this.rowCount = this.dao.count(this.query, this.serials);
         }
+
         return this.rowCount;
     }
 
