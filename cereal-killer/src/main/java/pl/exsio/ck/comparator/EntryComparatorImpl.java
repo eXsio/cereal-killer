@@ -115,7 +115,13 @@ public class EntryComparatorImpl implements EntryComparator {
     }
 
     protected void hideProgressBar() {
-        this.progress.hide();
+        new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                progress.hide();
+            }
+        }).start();
     }
 
 }
