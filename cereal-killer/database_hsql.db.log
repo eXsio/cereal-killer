@@ -1,3 +1,0 @@
-/*C3*/SET SCHEMA PUBLIC
-CREATE TABLE IF NOT EXISTS entries (id INTEGER IDENTITY, supplier varchar(255) NOT NULL, buy_invoice_no varchar(255) NOT NULL, recipient varchar(255) NOT NULL, supply_date datetime NOT NULL, sell_date datetime NOT NULL, sell_invoice_no varchar(255) NOT NULL, digest varchar(255) NOT NULL,UNIQUE(supplier, buy_invoice_no, recipient, supply_date, sell_date, sell_invoice_no),UNIQUE(digest))
-CREATE TABLE IF NOT EXISTS serials (id INTEGER IDENTITY, serial_no varchar(255) NOT NULL, entry_id INTEGER NOT NULL, FOREIGN KEY(entry_id) REFERENCES entries(id),UNIQUE(serial_no),UNIQUE(serial_no, entry_id))
