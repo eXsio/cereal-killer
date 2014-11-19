@@ -56,9 +56,7 @@ public class ProgressPresenterImpl implements ProgressPresenter {
             @Override
             public void run() {
                 view.getBar().setIndeterminate(indeterminate);
-                if(indeterminate) {
-                    view.getBar().setStringPainted(false);
-                }
+                view.getBar().setStringPainted(!indeterminate);
                 view.showOnScreen(0);
                 view.setVisible(true);
             }

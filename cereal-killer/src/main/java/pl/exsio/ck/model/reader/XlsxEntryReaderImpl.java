@@ -137,6 +137,7 @@ public class XlsxEntryReaderImpl implements EntryReader {
         }
         this.progress = (ProgressPresenter) App.getContext().getBean("progressPresenter");
         this.progress.setProgressName(progressName);
+        this.progress.setProgress(0);
         this.progress.show(false);
     }
 

@@ -58,7 +58,8 @@ public final class EntryDaoImpl implements EntryDao {
         }
 
         try {
-            conn = DriverManager.getConnection(url, "sa", "");
+            this.conn = DriverManager.getConnection(url, "sa", "");
+            this.conn.setAutoCommit(false);
             this.log.log("ustanowiono połączenie z bazą danych (HSQLDB), url: " + url);
         } catch (SQLException ex) {
             this.log.log("Problem z otwarciem polaczenia");
@@ -490,7 +491,6 @@ public final class EntryDaoImpl implements EntryDao {
 
     protected PreparedStatement getStatement(String sql) {
         try {
-            this.conn.setAutoCommit(false);
             return this.conn.prepareStatement(sql);
         } catch (SQLException ex) {
             this.log.log("wystąpił błąd podczas przetwarzania zapytania: " + sql);
@@ -513,7 +513,8 @@ public final class EntryDaoImpl implements EntryDao {
                             + "sell_date datetime NOT NULL, "
                             + "sell_invoice_no varchar(255) NOT NULL, "
                             + "digest varchar(255) NOT NULL,"
-                            + "UNIQUE(supplier, buy_invoice_no, recipient, supply_date, sell_date, sell_invoice_no),"
+                            + "UNIQUE(supplier, buy_invoice_no, recipient, "
+                            + "supply_date, sell_date, sell_invoice_no),"
                             + "UNIQUE(digest))");
 
                     add("CREATE TABLE IF NOT EXISTS serials ("
@@ -524,6 +525,14 @@ public final class EntryDaoImpl implements EntryDao {
                             + "UNIQUE(serial_no),"
                             + "UNIQUE(serial_no, entry_id))");
 
+                    add("CREATE TABLE IF NOT EXISTS settings ("
+                            + "id INTEGER IDENTITY, "
+                            + "s_name varchar(255) NOT NULL, "
+                            + "s_value varchar(255) NOT NULL)");
+
+                    add("INSERT INTO settings(s_name, s_value) "
+                            + "values ('index_created','false')");
+
                 }
             };
 
@@ -531,9 +540,35 @@ public final class EntryDaoImpl implements EntryDao {
                 PreparedStatement pstmt = this.conn.prepareStatement(query);
                 pstmt.execute();
             }
-
+            this.conn.commit();
+            this.checkAndCreateIndex();
         } catch (SQLException ex) {
             this.log.log("Problem z utworzeniem tabel");
+            this.log.log(ExceptionUtils.getMessage(ex));
+        }
+    }
+
+    private void checkAndCreateIndex() {
+
+        try {
+            PreparedStatement pstmt = this.conn.prepareStatement("select s_value from settings where s_name = 'index_created'");
+            ResultSet result = pstmt.executeQuery();
+            if (result.next()) {
+                Boolean indexCreated = Boolean.valueOf(result.getString("s_value"));
+                if (!indexCreated) {
+                    this.log.log("zakładam index");
+                    pstmt = this.conn.prepareStatement("CREATE INDEX serials_index ON serials(serial_no)");
+                    pstmt.execute();
+                    pstmt = this.conn.prepareStatement("UPDATE settings set s_value = 'true' where s_name='index_created'");
+                    pstmt.execute();
+                    this.conn.commit();
+                    this.log.log("indeks został utworzony");
+                } else {
+                    this.log.log("weryfikacja indexu zakończona powodzeniem");
+                }
+            }
+        } catch (SQLException ex) {
+            this.log.log("Problem z założeniem indexu");
             this.log.log(ExceptionUtils.getMessage(ex));
         }
     }
