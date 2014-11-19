@@ -18,9 +18,7 @@ public class EntryTableModel extends DefaultTableModel {
 
     protected static final int PAGE_SIZE = 100;
 
-    protected static final int CACHE_SIZE = 5000;
-
-    protected static int i = 0;
+    protected static final int CACHE_SIZE = 2000;
 
     protected final EntryDao dao;
 
