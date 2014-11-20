@@ -65,8 +65,18 @@
     
     <bean name="entryComparator" class="pl.exsio.ck.comparator.EntryComparatorImpl">
         <property name="log" ref="logPresenter"/>
-        <property name="dao" ref="entryDao"/>
         <property name="reader" ref="entryReader"/>
+        <property name="foundRetriever" >
+            <bean class="pl.exsio.ck.comparator.retriever.found.FoundSerialsRetrieverImpl">
+                <property name="log" ref="logPresenter"/>
+                <property name="dao" ref="entryDao"/>
+            </bean>
+        </property>
+        <property name="notFoundRetriever" >
+            <bean class="pl.exsio.ck.comparator.retriever.notfound.NotFoundSerialsRetrieverImpl">
+                <property name="log" ref="logPresenter"/>
+            </bean>
+        </property>
     </bean>
     
     <bean name="entryReader" class="pl.exsio.ck.model.reader.XlsxEntryReaderImpl">

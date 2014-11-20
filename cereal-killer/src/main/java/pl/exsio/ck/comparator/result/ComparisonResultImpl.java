@@ -1,4 +1,4 @@
-package pl.exsio.ck.comparator;
+package pl.exsio.ck.comparator.result;
 
 /**
  *

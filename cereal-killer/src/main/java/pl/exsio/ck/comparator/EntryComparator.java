@@ -1,5 +1,6 @@
 package pl.exsio.ck.comparator;
 
+import pl.exsio.ck.comparator.result.ComparisonResult;
 import java.io.File;
 
 /**

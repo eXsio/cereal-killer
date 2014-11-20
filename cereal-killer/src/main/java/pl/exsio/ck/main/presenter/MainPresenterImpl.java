@@ -6,7 +6,7 @@ import java.io.File;
 import javax.swing.JFileChooser;
 import javax.swing.JTabbedPane;
 import javax.swing.filechooser.FileFilter;
-import pl.exsio.ck.comparator.ComparisonResult;
+import pl.exsio.ck.comparator.result.ComparisonResult;
 import pl.exsio.ck.comparator.EntryComparator;
 import pl.exsio.ck.entrytable.presenter.EntryTablePresenter;
 import pl.exsio.ck.importer.EntryImporter;
