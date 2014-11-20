@@ -13,6 +13,7 @@ import pl.exsio.ck.model.Entries;
 import pl.exsio.ck.model.Entry;
 import pl.exsio.ck.model.dao.EntryDao;
 import pl.exsio.ck.model.reader.EntryReader;
+import pl.exsio.ck.progress.presenter.ProgressHelper;
 import pl.exsio.ck.progress.presenter.ProgressPresenter;
 import pl.exsio.ck.util.ArrayUtil;
 
@@ -24,19 +25,17 @@ public class EntryComparatorImpl implements EntryComparator {
 
     private EntryReader reader;
 
-    protected ProgressPresenter progress;
-
     @Override
     public ComparisonResult compareFile(File file) {
         log.log("rozpoczęto porównywanie");
         String[] serials = this.getSerialNumbersFromFile(file);
-        this.showProgressBar("porównuję wczytane dane z danymi w bazie...");
+        ProgressPresenter progress = ProgressHelper.showProgressBar("porównuję wczytane dane z danymi w bazie...", true);
         final String[] found = this.getFoundSerialNumbers(serials);
         final String[] notFound = this.getNotFoundSerialNumbers(serials, found);
         log.log("porównywanie zakończone");
         log.log("znaleziono: " + found.length);
         log.log("nieznaleziono: " + notFound.length);
-        this.hideProgressBar();
+        ProgressHelper.hideProgressBar(progress);
         return new ComparisonResultImpl(found, notFound);
     }
 
@@ -96,32 +95,6 @@ public class EntryComparatorImpl implements EntryComparator {
 
     public void setReader(EntryReader reader) {
         this.reader = reader;
-    }
-
-    protected void showProgressBar(final String progressName) {
-        new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                if (progress != null) {
-                    progress.hide();
-                }
-                progress = (ProgressPresenter) App.getContext().getBean("progressPresenter");
-                progress.setProgressName(progressName);
-                progress.show(true);
-            }
-        }).start();
-
-    }
-
-    protected void hideProgressBar() {
-        new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                progress.hide();
-            }
-        }).start();
     }
 
 }

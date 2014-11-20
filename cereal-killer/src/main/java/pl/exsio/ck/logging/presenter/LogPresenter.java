@@ -12,6 +12,8 @@ public interface LogPresenter extends Presenter {
     void setView(AbstractLogPanel view);
     
     void log(String msg);
+    
+    void logThrowable(Throwable t);
 
     void clean();
 }

@@ -87,6 +87,7 @@ public class EntryTablePresenterImpl implements EntryTablePresenter {
                         }
                     }
                 });
+                System.gc();
                 return null;
             }
         };

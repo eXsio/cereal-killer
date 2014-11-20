@@ -34,7 +34,7 @@ public interface EntryEditorPresenter {
 
     public interface SaveListener {
 
-        void saveEntries(Collection<Entry> entries);
+        void saveEntries(String[] serials, Entry dataPattern);
     }
 
     public interface CancelListener {

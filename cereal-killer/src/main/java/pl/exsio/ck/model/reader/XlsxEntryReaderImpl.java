@@ -17,14 +17,12 @@ import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import pl.exsio.ck.logging.presenter.LogPresenter;
-import pl.exsio.ck.main.app.App;
 import pl.exsio.ck.model.Entry;
 import pl.exsio.ck.model.EntryImpl;
+import pl.exsio.ck.progress.presenter.ProgressHelper;
 import pl.exsio.ck.progress.presenter.ProgressPresenter;
 
 public class XlsxEntryReaderImpl implements EntryReader {
-
-    private ProgressPresenter progress;
 
     private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -41,7 +39,7 @@ public class XlsxEntryReaderImpl implements EntryReader {
 
     @Override
     public Collection<Entry> readEntries(File file, String progressName, boolean serialsOnly) {
-        this.showProgressBar(progressName);
+        ProgressPresenter progress = ProgressHelper.showProgressBar(progressName, false);
         Row currentRow = null;
         Cell currentCell = null;
         ArrayList<Entry> entries = new ArrayList<>();
@@ -49,11 +47,10 @@ public class XlsxEntryReaderImpl implements EntryReader {
             XSSFSheet sheet = this.openSheet(file);
 
             Iterator<Row> rowIterator = sheet.iterator();
-            this.updateProgressBar(0, sheet.getPhysicalNumberOfRows() - 1);
+            int totalRowCount = sheet.getPhysicalNumberOfRows() - 1;
             int rowCounter = 0;
-
             while (rowIterator.hasNext()) {
-                this.updateProgressBar(rowCounter, sheet.getPhysicalNumberOfRows() - 1);
+                ProgressHelper.updateProgressBar(progress, (int) (rowCounter * 100 / totalRowCount));
                 currentRow = rowIterator.next();
                 if (currentRow.getRowNum() > 0) {
                     Entry e = new EntryImpl();
@@ -79,7 +76,8 @@ public class XlsxEntryReaderImpl implements EntryReader {
                     + ". Akceptowalny format to 'yyyy-mm-dd'");
             this.log.log(ExceptionUtils.getMessage(ex));
         }
-        this.hideProgressBar();
+        System.gc();
+        ProgressHelper.hideProgressBar(progress);
         return entries;
     }
 
@@ -129,24 +127,6 @@ public class XlsxEntryReaderImpl implements EntryReader {
             return false;
         }
 
-    }
-
-    private void showProgressBar(String progressName) {
-        if (this.progress != null) {
-            this.progress.hide();
-        }
-        this.progress = (ProgressPresenter) App.getContext().getBean("progressPresenter");
-        this.progress.setProgressName(progressName);
-        this.progress.setProgress(0);
-        this.progress.show(false);
-    }
-
-    private void updateProgressBar(int count, int max) {
-        this.progress.setProgress((int) (count * 100 / max));
-    }
-
-    private void hideProgressBar() {
-        this.progress.hide();
     }
 
     private String getStringValue(Cell cell) {

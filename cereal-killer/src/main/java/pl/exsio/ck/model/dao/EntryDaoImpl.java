@@ -16,12 +16,11 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import pl.exsio.ck.logging.presenter.LogPresenter;
-import pl.exsio.ck.main.app.App;
 import pl.exsio.ck.model.Entries;
 import pl.exsio.ck.model.Entry;
 import pl.exsio.ck.model.EntryImpl;
+import pl.exsio.ck.progress.presenter.ProgressHelper;
 import pl.exsio.ck.progress.presenter.ProgressPresenter;
 
 public final class EntryDaoImpl implements EntryDao {
@@ -33,13 +32,10 @@ public final class EntryDaoImpl implements EntryDao {
 
     protected LogPresenter log;
 
-    protected ProgressPresenter progress;
-
     protected final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
     public EntryDaoImpl(LogPresenter log) {
         this(log, DB_URL);
-        this.setUp();
     }
 
     public EntryDaoImpl(LogPresenter log, String dbUrl) {
@@ -54,7 +50,8 @@ public final class EntryDaoImpl implements EntryDao {
             Class.forName(DRIVER);
         } catch (ClassNotFoundException ex) {
             this.log.log("Brak sterownika JDBC");
-            this.log.log(ExceptionUtils.getMessage(ex));
+            this.log.logThrowable(ex);
+
         }
 
         try {
@@ -63,47 +60,67 @@ public final class EntryDaoImpl implements EntryDao {
             this.log.log("ustanowiono połączenie z bazą danych (HSQLDB), url: " + url);
         } catch (SQLException ex) {
             this.log.log("Problem z otwarciem polaczenia");
-            this.log.log(ExceptionUtils.getMessage(ex));
+            this.log.logThrowable(ex);
+
         }
     }
 
     @Override
-    public Collection<Entry> save(Collection<Entry> entries, boolean updateExisting) {
+    public void save(Collection<Entry> entries, boolean updateExisting) {
         try {
-            return this.saveCollection(entries, updateExisting);
+            this.saveEntryCollection(entries, updateExisting);
         } catch (SQLException ex) {
             this.log.log("wystąpił błąd podczas zapisywania wpisów: " + entries);
-            this.log.log(ExceptionUtils.getMessage(ex));
-            return null;
+            this.log.logThrowable(ex);
+
         }
     }
 
-    protected Collection<Entry> saveCollection(Collection<Entry> entries, boolean updateExising) throws SQLException {
-        this.showProgressBar("pracuję...");
+    @Override
+    public void saveSerials(String[] serials, Entry dataPattern, boolean updateExisting) {
+        try {
+            ProgressPresenter progress = ProgressHelper.showProgressBar("pracuję...", true);
+            this.saveSerialsGroup(serials, dataPattern, updateExisting);
+            this.conn.commit();
+            System.gc();
+            ProgressHelper.hideProgressBar(progress);
+        } catch (SQLException ex) {
+            this.log.log("wystąpił błąd podczas zapisywania numerów seryjnych: " + Arrays.toString(serials));
+            this.log.logThrowable(ex);
+        }
+    }
+
+    protected void saveEntryCollection(Collection<Entry> entries, boolean updateExising) throws SQLException {
+        ProgressPresenter progress = ProgressHelper.showProgressBar("pracuję...", true);
         Map<String, List<Entry>> saveMap = this.createSaveMap(entries);
         for (String digest : saveMap.keySet()) {
             List<Entry> entriesGroup = saveMap.get(digest);
             String[] serials = Entries.getSerials(entriesGroup);
-            List<String> existingSerials = Arrays.asList(this.matchSerials(serials));
-            List<String> serialsToInsert = new ArrayList<>();
-            List<String> serialsToUpdate = new ArrayList<>();
-            for (String serial : serials) {
-                if (!existingSerials.contains(serial)) {
-                    serialsToInsert.add(serial);
-                } else {
-                    serialsToUpdate.add(serial);
-                }
-            }
-            int entryId = this.obtainEntryIdForDigest(digest, entriesGroup.iterator().next());
-            this.performInserts(serialsToInsert, entryId);
-            if (updateExising) {
-                this.performUpdates(serialsToUpdate, entryId);
-            }
-
+            Entry entry = entriesGroup.iterator().next();
+            this.saveSerialsGroup(serials, entry, updateExising);
         }
         this.conn.commit();
-        this.hideProgressBar();
-        return entries;
+        System.gc();
+        ProgressHelper.hideProgressBar(progress);
+    }
+
+    private void saveSerialsGroup(String[] serials, Entry dataPattern, boolean updateExising) throws SQLException {
+
+        List<String> existingSerials = Arrays.asList(this.matchSerials(serials));
+        List<String> serialsToInsert = new ArrayList<>();
+        List<String> serialsToUpdate = new ArrayList<>();
+        for (String serial : serials) {
+            if (!existingSerials.contains(serial)) {
+                serialsToInsert.add(serial);
+            } else {
+                serialsToUpdate.add(serial);
+            }
+        }
+        int entryId = this.obtainEntryId(dataPattern);
+        this.performInserts(serialsToInsert, entryId);
+        if (updateExising) {
+            this.performUpdates(serialsToUpdate, entryId);
+        }
     }
 
     protected void performUpdates(List<String> serialsToUpdate, int entryId) throws RuntimeException, SQLException {
@@ -130,9 +147,13 @@ public final class EntryDaoImpl implements EntryDao {
         }
     }
 
-    protected int obtainEntryIdForDigest(String digest, Entry entry) throws RuntimeException, SQLException {
+    protected int obtainEntryId(Entry entry) throws RuntimeException, SQLException {
         int entryId;
         PreparedStatement pstmt = this.getStatement("select id from entries where digest = ?");
+        String digest = entry.getDigest();
+        if (digest == null) {
+            throw new RuntimeException("Digest of an entry cannot be null");
+        }
         pstmt.setString(1, digest);
         ResultSet result = pstmt.executeQuery();
         if (result.next()) {
@@ -171,8 +192,7 @@ public final class EntryDaoImpl implements EntryDao {
             return existingSerials.toArray(new String[existingSerials.size()]);
         } catch (SQLException ex) {
             this.log.log("wystąpił błąd podczas znajdowania numerów seryjnych");
-            this.log.log(ExceptionUtils.getMessage(ex));
-            ex.printStackTrace();
+            this.log.logThrowable(ex);
             return null;
         }
     }
@@ -219,7 +239,7 @@ public final class EntryDaoImpl implements EntryDao {
             return fetchedRows;
         } catch (SQLException ex) {
             this.log.log("wystąpił błąd podczas wyszukania wpisów");
-            this.log.log(ExceptionUtils.getMessage(ex));
+            this.log.logThrowable(ex);
             return null;
         }
     }
@@ -317,7 +337,7 @@ public final class EntryDaoImpl implements EntryDao {
             }
         } catch (SQLException ex) {
             this.log.log("wystąpił błąd podczas wyszukania wpisów");
-            this.log.log(ExceptionUtils.getMessage(ex));
+            this.log.logThrowable(ex);
             return -1;
         }
     }
@@ -329,7 +349,8 @@ public final class EntryDaoImpl implements EntryDao {
                 this.conn.close();
             } catch (SQLException ex) {
                 this.log.log("Problem z zamknięciem połączenia");
-                this.log.log(ExceptionUtils.getMessage(ex));
+                this.log.logThrowable(ex);
+
             }
         }
     }
@@ -366,7 +387,7 @@ public final class EntryDaoImpl implements EntryDao {
             return this.conn.prepareStatement(sql);
         } catch (SQLException ex) {
             this.log.log("wystąpił błąd podczas przetwarzania zapytania: " + sql);
-            this.log.log(ExceptionUtils.getMessage(ex));
+            this.log.logThrowable(ex);
             return null;
         }
     }
@@ -416,7 +437,8 @@ public final class EntryDaoImpl implements EntryDao {
             this.checkAndCreateIndex();
         } catch (SQLException ex) {
             this.log.log("Problem z utworzeniem tabel");
-            this.log.log(ExceptionUtils.getMessage(ex));
+            this.log.logThrowable(ex);
+
         }
     }
 
@@ -441,34 +463,9 @@ public final class EntryDaoImpl implements EntryDao {
             }
         } catch (SQLException ex) {
             this.log.log("Problem z założeniem indexu");
-            this.log.log(ExceptionUtils.getMessage(ex));
+            this.log.logThrowable(ex);
+
         }
-    }
-
-    protected void showProgressBar(final String progressName) {
-        new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                if (progress != null) {
-                    progress.hide();
-                }
-                progress = (ProgressPresenter) App.getContext().getBean("progressPresenter");
-                progress.setProgressName(progressName);
-                progress.show(true);
-            }
-        }).start();
-
-    }
-
-    protected void hideProgressBar() {
-        new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                progress.hide();
-            }
-        }).start();
     }
 
 }

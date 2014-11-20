@@ -14,7 +14,9 @@ public interface EntryDao {
 
     String SORT_ASC = "asc";
 
-    Collection<Entry> save(Collection<Entry> entries, boolean updateExisting);
+    void save(Collection<Entry> entries, boolean updateExisting);
+
+    void saveSerials(String[] serials, Entry dataPattern, boolean updateExisting);
 
     void connect(String url);
 

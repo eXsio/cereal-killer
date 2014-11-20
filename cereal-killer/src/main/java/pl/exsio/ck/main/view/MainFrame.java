@@ -35,7 +35,7 @@ public class MainFrame extends AbstractMainFrame {
         browseBtn = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("CerealKiller v1.2");
+        setTitle("CerealKiller v1.3");
         setName("mainFrame"); // NOI18N
         setResizable(false);
 

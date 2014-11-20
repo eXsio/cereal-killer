@@ -56,7 +56,6 @@
     
     <bean name="entryDao" class="pl.exsio.ck.model.dao.EntryDaoImpl">
         <constructor-arg ref="logPresenter"/>
-        <constructor-arg value="jdbc:hsqldb:database.db"/>
     </bean> 
     
     <bean name="entryImporter" class="pl.exsio.ck.importer.EntryImporterImpl">

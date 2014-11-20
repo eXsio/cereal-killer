@@ -60,6 +60,7 @@ public class ProgressPresenterImpl implements ProgressPresenter {
                 view.showOnScreen(0);
                 view.setVisible(true);
             }
+            
         });
     }
 
@@ -69,9 +70,13 @@ public class ProgressPresenterImpl implements ProgressPresenter {
 
             @Override
             protected Object doInBackground() throws Exception {
+                return null;
+            }
+
+            @Override
+            protected void done() {
                 view.setVisible(false);
                 view.dispose();
-                return null;
             }
         };
         worker.execute();

@@ -1,10 +1,7 @@
 package pl.exsio.ck.editor.presenter;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.swing.JOptionPane;
@@ -70,10 +67,10 @@ public class EntryEditorPresenterImpl implements EntryEditorPresenter {
 
     @Override
     public void save() {
-        Collection<Entry> entries = this.getEntries();
-        if (entries != null) {
+        Entry dataPattern = this.getDataPattern();
+        if (dataPattern != null) {
             for (SaveListener listener : this.saveListeners) {
-                listener.saveEntries(entries);
+                listener.saveEntries(this.serials, dataPattern);
             }
             this.closeView();
         } else {
@@ -93,10 +90,17 @@ public class EntryEditorPresenterImpl implements EntryEditorPresenter {
         this.view.dispose();
     }
 
-    protected Collection<Entry> getEntries() {
+    protected Entry getDataPattern() {
         Map<String, Object> values = this.view.getValues();
         if (this.validateValues(values)) {
-            return this.createEntries(values);
+            Entry dataPattern = new EntryImpl();
+            dataPattern.setBuyInvoiceNo((String) values.get(V_BUY_INVOICE_NO));
+            dataPattern.setRecipient((String) values.get(V_RECIPIENT));
+            dataPattern.setSellDate((Date) values.get(V_SELL_DATE));
+            dataPattern.setSellInvoiceNo((String) values.get(V_SELL_INVOICE_NO));
+            dataPattern.setSupplier((String) values.get(V_SUPPLIER));
+            dataPattern.setSupplyDate((Date) values.get(V_SUPPLY_DATE));
+            return dataPattern;
         } else {
             return null;
         }
@@ -109,22 +113,6 @@ public class EntryEditorPresenterImpl implements EntryEditorPresenter {
             }
         }
         return true;
-    }
-
-    protected Collection<Entry> createEntries(Map<String, Object> values) {
-        List<Entry> entries = new ArrayList<>();
-        for (String serial : this.serials) {
-            Entry e = new EntryImpl();
-            e.setSerialNo(serial);
-            e.setBuyInvoiceNo((String) values.get(V_BUY_INVOICE_NO));
-            e.setRecipient((String) values.get(V_RECIPIENT));
-            e.setSellDate((Date) values.get(V_SELL_DATE));
-            e.setSellInvoiceNo((String) values.get(V_SELL_INVOICE_NO));
-            e.setSupplier((String) values.get(V_SUPPLIER));
-            e.setSupplyDate((Date) values.get(V_SUPPLY_DATE));
-            entries.add(e);
-        }
-        return entries;
     }
 
 }

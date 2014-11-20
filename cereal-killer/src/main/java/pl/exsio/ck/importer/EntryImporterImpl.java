@@ -33,44 +33,77 @@ public class EntryImporterImpl implements EntryImporter {
     }
 
     protected void verifyAndSaveEntries(Collection<Entry> entries, final boolean updateEnabled) {
-        String[] empty = this.getEmptyEntries(entries);
-        if (empty.length == 0) {
-            doSaveEntries(entries, updateEnabled);
+        final EntryVerificationResult result = this.verifyEntries(entries);
+        if (result.getEmpty().length == 0) {
+            this.saveEntries(entries, updateEnabled);
         } else {
-            EntryEditorPresenter editor = this.getEntryEditor();
-            editor.show(empty, new SaveListener() {
-
-                @Override
-                public void saveEntries(Collection<Entry> entries) {
-                    doSaveEntries(entries, updateEnabled);
-                }
-            }, new CancelListener() {
-
-                @Override
-                public void cancelEdition() {
-                    log.log((updateEnabled ? "aktualizacja anulowana" : "import anulowany") + " przez użytkownika");
-                }
-            });
+            this.showEntryEditor(updateEnabled, result);
         }
     }
 
-    protected void doSaveEntries(Collection<Entry> entries, final boolean updateEnabled) {
+    protected EntryVerificationResult verifyEntries(Collection<Entry> entries) {
+        List<String> empty = new ArrayList<>();
+        List<Entry> filled = new ArrayList<>();
+        for (Entry e : entries) {
+            if (!e.isDataFilled()) {
+                empty.add(e.getSerialNo());
+            } else {
+                filled.add(e);
+            }
+        }
+        return new EntryVerificationResult(empty.toArray(new String[empty.size()]), filled);
+    }
+
+    private void saveEntries(Collection<Entry> entries, final boolean updateEnabled) {
         this.dao.save(entries, updateEnabled);
         this.log.log((updateEnabled ? "aktualizacja zakończona" : "import zakończony"));
+    }
+
+    private void showEntryEditor(final boolean updateEnabled, final EntryVerificationResult result) {
+        EntryEditorPresenter editor = this.getEntryEditor();
+        editor.show(result.getEmpty(), new SaveListener() {
+
+            @Override
+            public void saveEntries(String[] serials, Entry dataPattern) {
+                dao.saveSerials(serials, dataPattern, updateEnabled);
+                Collection<Entry> filled = result.getFilled();
+                if (!filled.isEmpty()) {
+                    dao.save(filled, updateEnabled);
+                }
+                log.log((updateEnabled ? "aktualizacja zakończona" : "import zakończony"));
+            }
+        }, new CancelListener() {
+
+            @Override
+            public void cancelEdition() {
+                log.log((updateEnabled ? "aktualizacja anulowana" : "import anulowany") + " przez użytkownika");
+            }
+        });
     }
 
     protected EntryEditorPresenter getEntryEditor() {
         return (EntryEditorPresenter) App.getContext().getBean("entryEditorPresenter");
     }
 
-    protected String[] getEmptyEntries(Collection<Entry> entries) {
-        List<String> empty = new ArrayList<>();
-        for (Entry e : entries) {
-            if (!e.isDataFilled()) {
-                empty.add(e.getSerialNo());
-            }
+    protected class EntryVerificationResult {
+
+        private final String[] empty;
+
+        private final Collection<Entry> filled;
+
+        public EntryVerificationResult(String[] empty, Collection<Entry> filled) {
+            this.empty = empty;
+            this.filled = filled;
         }
-        return empty.toArray(new String[empty.size()]);
+
+        public String[] getEmpty() {
+            return empty;
+        }
+
+        public Collection<Entry> getFilled() {
+            return filled;
+        }
+
     }
 
     public void setLog(LogPresenter log) {
