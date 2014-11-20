@@ -6,7 +6,6 @@
 
     <bean name="mainFrame" class="pl.exsio.ck.main.view.MainFrame">
         <property name="logPanel" ref="logPanel"/>
-        <property name="visible" value="true"/>
     </bean> 
     
     <bean name="logPanel" class="pl.exsio.ck.logging.view.LogPanel">

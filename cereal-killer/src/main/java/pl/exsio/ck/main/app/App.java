@@ -2,6 +2,7 @@ package pl.exsio.ck.main.app;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import pl.exsio.ck.main.view.AbstractMainFrame;
 
 /**
  *
@@ -16,13 +17,15 @@ public class App {
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                App.ctx = new ClassPathXmlApplicationContext("context.xml");
+                ctx = new ClassPathXmlApplicationContext("context.xml");
+                AbstractMainFrame main = (AbstractMainFrame) ctx.getBean("mainFrame");
+                main.setVisible(true);
             }
         });
     }
 
     public static ApplicationContext getContext() {
-        return App.ctx;
+        return ctx;
     }
 
 }
