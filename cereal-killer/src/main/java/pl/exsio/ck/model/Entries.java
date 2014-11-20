@@ -6,7 +6,7 @@ import java.util.List;
 
 /**
  *
- * @author sdymi_000
+ * @author exsio
  */
 public class Entries {
     
