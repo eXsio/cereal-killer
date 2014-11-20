@@ -17,12 +17,12 @@ public class NotFoundSerialsRetrieverImpl implements NotFoundSerialsRetriever {
         this.log.log("przetwarzam nieznalezione");
         List<String[]> serialsChunks = this.getAndLogSerialsChunks(serials);
         final List<String> notFoundList = new ArrayList();
-        List<Thread> threads = this.start(foundSerials, serialsChunks, notFoundList);
-        this.join(threads);
+        List<Thread> threads = this.startWorkerThreads(foundSerials, serialsChunks, notFoundList);
+        this.joinWorkerThreads(threads);
         return notFoundList.toArray(new String[notFoundList.size()]);
     }
 
-    protected List<Thread> start(String[] foundSerials, List<String[]> serialsList, final List<String> notFoundList) {
+    protected List<Thread> startWorkerThreads(String[] foundSerials, List<String[]> serialsList, final List<String> notFoundList) {
         List<Thread> threads = new ArrayList<>();
         final List<String> foundList = Arrays.asList(foundSerials);
         for (final String[] serialsChunk : serialsList) {
@@ -33,7 +33,7 @@ public class NotFoundSerialsRetrieverImpl implements NotFoundSerialsRetriever {
         return threads;
     }
 
-    private Thread createWorkerThread(final String[] serialsChunk, final List<String> foundList, final List<String> notFoundList) {
+    protected Thread createWorkerThread(final String[] serialsChunk, final List<String> foundList, final List<String> notFoundList) {
         Thread t = new Thread(new Runnable() {
 
             @Override
@@ -48,7 +48,7 @@ public class NotFoundSerialsRetrieverImpl implements NotFoundSerialsRetriever {
         return t;
     }
 
-    protected void join(List<Thread> threads) {
+    protected void joinWorkerThreads(List<Thread> threads) {
         for (Thread t : threads) {
             try {
                 t.join();
@@ -67,7 +67,7 @@ public class NotFoundSerialsRetrieverImpl implements NotFoundSerialsRetriever {
     }
 
     protected int computeChunkSize(String[] serials) {
-        return (int) Math.ceil(serials.length / getAvailableCpusCount());
+        return (int) Math.ceil(serials.length / this.getAvailableCpusCount());
     }
 
     protected int getAvailableCpusCount() {
