@@ -1,6 +1,5 @@
 package pl.exsio.ck.editor.presenter;
 
-import java.util.Collection;
 import pl.exsio.ck.editor.view.AbstractEntryEditorFrame;
 import pl.exsio.ck.model.Entry;
 

@@ -4,6 +4,10 @@ import java.awt.Container;
 import javax.swing.SwingWorker;
 import pl.exsio.ck.progress.view.AbstractProgressFrame;
 
+/**
+ *
+ * @author exsio
+ */
 public class ProgressPresenterImpl implements ProgressPresenter {
 
     private AbstractProgressFrame view;

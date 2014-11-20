@@ -8,7 +8,6 @@ import java.util.Collections;
 import java.util.List;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import pl.exsio.ck.logging.presenter.LogPresenter;
-import pl.exsio.ck.main.app.App;
 import pl.exsio.ck.model.Entries;
 import pl.exsio.ck.model.Entry;
 import pl.exsio.ck.model.dao.EntryDao;
@@ -17,6 +16,10 @@ import pl.exsio.ck.progress.presenter.ProgressHelper;
 import pl.exsio.ck.progress.presenter.ProgressPresenter;
 import pl.exsio.ck.util.ArrayUtil;
 
+/**
+ *
+ * @author exsio
+ */
 public class EntryComparatorImpl implements EntryComparator {
 
     private LogPresenter log;

@@ -1,7 +1,6 @@
 package pl.exsio.ck.serialtable.presenter;
 
 import java.awt.Container;
-import java.util.Collection;
 import javax.swing.JTable;
 import javax.swing.RowFilter;
 import javax.swing.SwingWorker;
@@ -10,6 +9,10 @@ import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import pl.exsio.ck.serialtable.view.AbstractSerialTablePanel;
 
+/**
+ *
+ * @author exsio
+ */
 public class SerialTablePresenterImpl implements SerialTablePresenter {
 
     private AbstractSerialTablePanel view;

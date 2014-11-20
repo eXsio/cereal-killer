@@ -13,6 +13,10 @@ import pl.exsio.ck.model.Entry;
 import pl.exsio.ck.model.dao.EntryDao;
 import pl.exsio.ck.model.reader.EntryReader;
 
+/**
+ *
+ * @author exsio
+ */
 public class EntryImporterImpl implements EntryImporter {
 
     private LogPresenter log;

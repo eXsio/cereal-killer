@@ -9,6 +9,10 @@ import pl.exsio.ck.editor.view.AbstractEntryEditorFrame;
 import pl.exsio.ck.model.Entry;
 import pl.exsio.ck.model.EntryImpl;
 
+/**
+ *
+ * @author exsio
+ */
 public class EntryEditorPresenterImpl implements EntryEditorPresenter {
 
     protected AbstractEntryEditorFrame view;

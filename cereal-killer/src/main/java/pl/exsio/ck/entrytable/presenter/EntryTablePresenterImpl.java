@@ -10,6 +10,10 @@ import javax.swing.table.TableRowSorter;
 import pl.exsio.ck.entrytable.view.AbstractEntryTablePanel;
 import pl.exsio.ck.model.dao.EntryDao;
 
+/**
+ *
+ * @author exsio
+ */
 public class EntryTablePresenterImpl implements EntryTablePresenter {
 
     private AbstractEntryTablePanel view;

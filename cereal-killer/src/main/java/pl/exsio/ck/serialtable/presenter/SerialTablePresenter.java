@@ -1,6 +1,5 @@
 package pl.exsio.ck.serialtable.presenter;
 
-import java.util.Collection;
 import pl.exsio.ck.presenter.Presenter;
 import pl.exsio.ck.serialtable.view.AbstractSerialTablePanel;
 

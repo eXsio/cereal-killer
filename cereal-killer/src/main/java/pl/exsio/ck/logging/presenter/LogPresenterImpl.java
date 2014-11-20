@@ -7,6 +7,10 @@ import javax.swing.SwingWorker;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import pl.exsio.ck.logging.view.AbstractLogPanel;
 
+/**
+ *
+ * @author exsio
+ */
 public class LogPresenterImpl implements LogPresenter {
     
     private AbstractLogPanel view;

@@ -2,7 +2,6 @@ package pl.exsio.ck.progress.view;
 
 import javax.swing.JLabel;
 import javax.swing.JProgressBar;
-import pl.exsio.ck.progress.presenter.ProgressPresenter;
 
 /**
  *

@@ -23,6 +23,10 @@ import pl.exsio.ck.model.EntryImpl;
 import pl.exsio.ck.progress.presenter.ProgressHelper;
 import pl.exsio.ck.progress.presenter.ProgressPresenter;
 
+/**
+ *
+ * @author exsio
+ */
 public final class EntryDaoImpl implements EntryDao {
 
     public static final String DRIVER = "org.hsqldb.jdbcDriver";
