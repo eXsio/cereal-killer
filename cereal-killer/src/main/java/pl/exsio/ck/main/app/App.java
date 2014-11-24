@@ -18,7 +18,7 @@ public class App {
             @Override
             public void run() {
                 ctx = new ClassPathXmlApplicationContext("context.xml");
-                AbstractMainFrame main = (AbstractMainFrame) ctx.getBean("mainFrame");
+                AbstractMainFrame main = ctx.getBean(AbstractMainFrame.class);
                 main.setVisible(true);
             }
         });

@@ -6,22 +6,23 @@ import java.io.File;
 import javax.swing.JFileChooser;
 import javax.swing.JTabbedPane;
 import javax.swing.filechooser.FileFilter;
+import pl.exsio.ck.browser.view.BrowserFrame;
 import pl.exsio.ck.comparator.result.ComparisonResult;
 import pl.exsio.ck.comparator.EntryComparator;
 import pl.exsio.ck.entrytable.presenter.EntryTablePresenter;
 import pl.exsio.ck.importer.EntryImporter;
+import pl.exsio.ck.main.app.App;
 import pl.exsio.ck.main.view.AbstractMainFrame;
 import pl.exsio.ck.model.dao.EntryDao;
 import pl.exsio.ck.model.reader.EntryReader;
 import pl.exsio.ck.serialtable.presenter.SerialTablePresenter;
-import pl.exsio.ck.table.TableAware;
 import pl.exsio.ck.view.AbstractFrame;
 
 /**
  *
  * @author exsio
  */
-public class MainPresenterImpl extends TableAware implements MainPresenter {
+public class MainPresenterImpl implements MainPresenter {
 
     private AbstractMainFrame view;
 
@@ -164,6 +165,18 @@ public class MainPresenterImpl extends TableAware implements MainPresenter {
         });
         jfc.setCurrentDirectory(new File("."));
         return jfc;
+    }
+
+    protected BrowserFrame getBrowserFrame() {
+        return App.getContext().getBean(BrowserFrame.class);
+    }
+
+    protected EntryTablePresenter getEntryTablePresenter() {
+        return App.getContext().getBean(EntryTablePresenter.class);
+    }
+
+    protected SerialTablePresenter getSerialTablePresenter() {
+        return App.getContext().getBean(SerialTablePresenter.class);
     }
 
     @Override

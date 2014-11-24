@@ -10,7 +10,7 @@ public class ProgressHelper {
     
     public static ProgressPresenter showProgressBar(final String progressName, final boolean indeterminate) {
         
-        final ProgressPresenter progress = (ProgressPresenter) App.getContext().getBean("progressPresenter");
+        final ProgressPresenter progress = App.getContext().getBean(ProgressPresenter.class);
         new Thread(new Runnable() {
             
             @Override
