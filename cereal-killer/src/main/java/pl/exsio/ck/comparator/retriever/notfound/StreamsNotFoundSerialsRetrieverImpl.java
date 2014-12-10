@@ -40,7 +40,7 @@ public class StreamsNotFoundSerialsRetrieverImpl implements NotFoundSerialsRetri
         List<String> serialsList = new ArrayList(Arrays.asList(serials));
         List<String> foundSerialsList = new ArrayList(Arrays.asList(foundSerials));
 
-        return serialsList.stream().parallel().filter(p -> !foundSerialsList.contains(p)).toArray(size -> new String[size]);
+        return serialsList.parallelStream().filter(p -> !foundSerialsList.contains(p)).toArray(size -> new String[size]);
     }
 
     public void setLog(LogPresenter log) {
