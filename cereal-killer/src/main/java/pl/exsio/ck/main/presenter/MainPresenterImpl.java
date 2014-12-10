@@ -70,14 +70,10 @@ public class MainPresenterImpl implements MainPresenter {
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             final File file = jfc.getSelectedFile();
             this.view.setEnabled(false);
-            Thread importThread = new Thread(new Runnable() {
-
-                @Override
-                public void run() {
-                    view.setEnabled(false);
-                    importer.importFile(file, updateEnabled);
-                    view.setEnabled(true);
-                }
+            Thread importThread = new Thread(() -> {
+                view.setEnabled(false);
+                importer.importFile(file, updateEnabled);
+                view.setEnabled(true);
             });
             importThread.start();
             this.view.setEnabled(true);
@@ -91,15 +87,11 @@ public class MainPresenterImpl implements MainPresenter {
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             final File file = jfc.getSelectedFile();
             this.view.setEnabled(false);
-            Thread compare = new Thread(new Runnable() {
-
-                @Override
-                public void run() {
-                    view.setEnabled(false);
-                    ComparisonResult result = comparator.compareFile(file);
-                    showCompareWindow(result);
-                    view.setEnabled(true);
-                }
+            Thread compare = new Thread(() -> {
+                view.setEnabled(false);
+                ComparisonResult result = comparator.compareFile(file);
+                showCompareWindow(result);
+                view.setEnabled(true);
             });
             compare.start();
             this.view.setEnabled(true);
@@ -108,19 +100,16 @@ public class MainPresenterImpl implements MainPresenter {
 
     @Override
     public void showBrowseWindow() {
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                AbstractFrame browser = getBrowserFrame();
-                EntryTablePresenter presenter = getEntryTablePresenter();
-                presenter.showEntries();
-                browser.setLayout(new BorderLayout());
-                browser.add(presenter.getView());
-                browser.setTitle("Przeglądaj zaimportowane wpisy");
-                browser.pack();
-                browser.showOnScreen(0);
-                browser.setVisible(true);
-            }
+        java.awt.EventQueue.invokeLater(() -> {
+            AbstractFrame browser = getBrowserFrame();
+            EntryTablePresenter presenter = getEntryTablePresenter();
+            presenter.showEntries();
+            browser.setLayout(new BorderLayout());
+            browser.add(presenter.getView());
+            browser.setTitle("Przeglądaj zaimportowane wpisy");
+            browser.pack();
+            browser.showOnScreen(0);
+            browser.setVisible(true);
         });
     }
 
@@ -135,27 +124,24 @@ public class MainPresenterImpl implements MainPresenter {
     }
 
     private void showCompareWindow(final ComparisonResult result) {
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                AbstractFrame browser = getBrowserFrame();
-                JTabbedPane tabs = new JTabbedPane();
+        java.awt.EventQueue.invokeLater(() -> {
+            AbstractFrame browser = getBrowserFrame();
+            JTabbedPane tabs = new JTabbedPane();
 
-                EntryTablePresenter entryPresenter = getEntryTablePresenter();
-                entryPresenter.showEntries(result.getFound());
+            EntryTablePresenter entryPresenter = getEntryTablePresenter();
+            entryPresenter.showEntries(result.getFound());
 
-                SerialTablePresenter serialPresenter = getSerialTablePresenter();
-                serialPresenter.showSerials(result.getNotFound());
+            SerialTablePresenter serialPresenter = getSerialTablePresenter();
+            serialPresenter.showSerials(result.getNotFound());
 
-                browser.setLayout(new BorderLayout());
-                tabs.add("Znalezione", entryPresenter.getView());
-                tabs.add("Nieznalezione", serialPresenter.getView());
-                browser.add(tabs);
-                browser.setTitle("Porównaj wpisy");
-                browser.pack();
-                browser.showOnScreen(0);
-                browser.setVisible(true);
-            }
+            browser.setLayout(new BorderLayout());
+            tabs.add("Znalezione", entryPresenter.getView());
+            tabs.add("Nieznalezione", serialPresenter.getView());
+            browser.add(tabs);
+            browser.setTitle("Porównaj wpisy");
+            browser.pack();
+            browser.showOnScreen(0);
+            browser.setVisible(true);
         });
     }
 
@@ -169,20 +155,15 @@ public class MainPresenterImpl implements MainPresenter {
             }
 
             private boolean isExtensionValid(File file) {
-                for (String extension : reader.getAcceptedFormats().keySet()) {
-                    if (file.getName().toLowerCase().endsWith("." + extension)) {
-                        return true;
-                    }
-                }
-                return false;
+                return reader.getAcceptedFormats().keySet().stream().anyMatch((extension) -> (file.getName().toLowerCase().endsWith("." + extension)));
             }
 
             @Override
             public String getDescription() {
                 StringBuilder sb = new StringBuilder();
-                for (String desc : reader.getAcceptedFormats().values()) {
+                reader.getAcceptedFormats().values().stream().forEach((desc) -> {
                     sb.append(desc).append(", ");
-                }
+                });
                 return sb.substring(0, sb.length() - 2);
             }
         });

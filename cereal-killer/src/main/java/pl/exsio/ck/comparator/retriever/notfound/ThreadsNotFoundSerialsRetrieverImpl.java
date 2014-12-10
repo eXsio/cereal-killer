@@ -31,7 +31,7 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import pl.exsio.ck.logging.presenter.LogPresenter;
 import pl.exsio.ck.util.ArrayUtil;
 
-public class NotFoundSerialsRetrieverImpl implements NotFoundSerialsRetriever {
+public class ThreadsNotFoundSerialsRetrieverImpl implements NotFoundSerialsRetriever {
 
     protected LogPresenter log;
 
@@ -40,46 +40,43 @@ public class NotFoundSerialsRetrieverImpl implements NotFoundSerialsRetriever {
         this.log.log("przetwarzam nieznalezione");
         List<String[]> serialsChunks = this.getAndLogSerialsChunks(serials);
         final List<String> notFoundList = new ArrayList();
-        List<Thread> threads = this.startWorkerThreads(foundSerials, serialsChunks, notFoundList);
+        List<Thread> threads = this.createAndStartWorkerThreads(foundSerials, serialsChunks, notFoundList);
         this.joinWorkerThreads(threads);
         return notFoundList.toArray(new String[notFoundList.size()]);
     }
 
-    protected List<Thread> startWorkerThreads(String[] foundSerials, List<String[]> serialsList, final List<String> notFoundList) {
+    protected List<Thread> createAndStartWorkerThreads(String[] foundSerials, List<String[]> serialsList, final List<String> notFoundList) {
         List<Thread> threads = new ArrayList<>();
         final List<String> foundList = Arrays.asList(foundSerials);
-        for (final String[] serialsChunk : serialsList) {
-            Thread t = this.createWorkerThread(serialsChunk, foundList, notFoundList);
+        serialsList.stream().map((serialsChunk) -> this.createWorkerThread(serialsChunk, foundList, notFoundList)).map((t) -> {
             threads.add(t);
+            return t;
+        }).forEach((t) -> {
             t.start();
-        }
+        });
         return threads;
     }
 
     protected Thread createWorkerThread(final String[] serialsChunk, final List<String> foundList, final List<String> notFoundList) {
-        Thread t = new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                List<String> workerList = new ArrayList<>(Arrays.asList(serialsChunk));
-                workerList.removeAll(Collections.singleton(null));
-                workerList.removeAll(foundList);
-                notFoundList.addAll(workerList);
-            }
+        Thread t = new Thread(() -> {
+            List<String> workerList = new ArrayList<>(Arrays.asList(serialsChunk));
+            workerList.removeAll(Collections.singleton(null));
+            workerList.removeAll(foundList);
+            notFoundList.addAll(workerList);
         });
 
         return t;
     }
 
     protected void joinWorkerThreads(List<Thread> threads) {
-        for (Thread t : threads) {
+        threads.stream().forEach((t) -> {
             try {
                 t.join();
             } catch (InterruptedException ex) {
                 this.log.log("podczas porównywania wystąpił błąd");
                 this.log.log(ExceptionUtils.getMessage(ex));
             }
-        }
+        });
     }
 
     protected List<String[]> getAndLogSerialsChunks(String[] serials) {

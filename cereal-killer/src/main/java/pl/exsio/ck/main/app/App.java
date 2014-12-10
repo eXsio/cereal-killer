@@ -37,13 +37,10 @@ public class App {
 
     public static void main(String[] args) {
 
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                ctx = new ClassPathXmlApplicationContext("context.xml");
-                AbstractMainFrame main = ctx.getBean(AbstractMainFrame.class);
-                main.setVisible(true);
-            }
+        java.awt.EventQueue.invokeLater(() -> {
+            ctx = new ClassPathXmlApplicationContext("context.xml");
+            AbstractMainFrame main = ctx.getBean(AbstractMainFrame.class);
+            main.setVisible(true);
         });
     }
 

@@ -61,19 +61,18 @@ public class EntryEditorPresenterImpl implements EntryEditorPresenter {
     public void show(String[] serials, SaveListener saveListener, CancelListener cancelListener) {
         this.initListeners(saveListener, cancelListener);
         this.serials = serials;
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                view.showOnScreen(0);
-                view.setVisible(true);
-            }
+        java.awt.EventQueue.invokeLater(() -> {
+            view.showOnScreen(0);
+            view.setVisible(true);
         });
     }
 
     private void initListeners(SaveListener saveListener, CancelListener cancelListener) {
         this.saveListeners = new LinkedHashSet<>();
         this.cancelListeners = new LinkedHashSet<>();
-        this.cancelListeners.add(this.getCloseEditorListener());
+        this.cancelListeners.add(() -> {
+            closeView();
+        });
         if (cancelListener != null) {
             this.cancelListeners.add(cancelListener);
         }
@@ -82,23 +81,13 @@ public class EntryEditorPresenterImpl implements EntryEditorPresenter {
         }
     }
 
-    private CancelListener getCloseEditorListener() {
-        return new CancelListener() {
-
-            @Override
-            public void cancelEdition() {
-                closeView();
-            }
-        };
-    }
-
     @Override
     public void save() {
         Entry dataPattern = this.getDataPattern();
         if (dataPattern != null) {
-            for (SaveListener listener : this.saveListeners) {
+            this.saveListeners.stream().forEach((listener) -> {
                 listener.saveEntries(this.serials, dataPattern);
-            }
+            });
             this.closeView();
         } else {
             JOptionPane.showMessageDialog(this.view, "Proszę wypełnić wszystkie dane", "Uwaga!", JOptionPane.ERROR_MESSAGE);
@@ -107,9 +96,9 @@ public class EntryEditorPresenterImpl implements EntryEditorPresenter {
 
     @Override
     public void cancel() {
-        for (CancelListener listener : this.cancelListeners) {
+        this.cancelListeners.stream().forEach((listener) -> {
             listener.cancelEdition();
-        }
+        });
     }
 
     protected void closeView() {
@@ -134,12 +123,7 @@ public class EntryEditorPresenterImpl implements EntryEditorPresenter {
     }
 
     protected boolean validateValues(Map<String, Object> values) {
-        for (String key : values.keySet()) {
-            if (values.get(key) == null) {
-                return false;
-            }
-        }
-        return true;
+        return values.keySet().stream().noneMatch((key) -> (values.get(key) == null));
     }
 
 }

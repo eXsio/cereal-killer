@@ -79,15 +79,11 @@ public class ProgressPresenterImpl implements ProgressPresenter {
     @Override
     public void show(final boolean indeterminate) {
 
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                view.getBar().setIndeterminate(indeterminate);
-                view.getBar().setStringPainted(!indeterminate);
-                view.showOnScreen(0);
-                view.setVisible(true);
-            }
-            
+        java.awt.EventQueue.invokeLater(() -> {
+            view.getBar().setIndeterminate(indeterminate);
+            view.getBar().setStringPainted(!indeterminate);
+            view.showOnScreen(0);
+            view.setVisible(true);
         });
     }
 

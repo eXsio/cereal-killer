@@ -21,38 +21,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package pl.exsio.ck.util;
+package pl.exsio.ck.comparator.retriever.notfound;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import pl.exsio.ck.logging.presenter.LogPresenter;
 
-/**
- *
- * @author exsio
- */
-public class ArrayUtil {
+public class StreamsNotFoundSerialsRetrieverImpl implements NotFoundSerialsRetriever {
 
-    public static <T extends Object> List<T[]> splitArray(T[] array, int max) {
+    protected LogPresenter log;
 
-        int x = array.length / max;
+    @Override
+    public String[] getNotFoundSerialNumbers(String[] serials, String[] foundSerials) {
 
-        int lower = 0;
-        int upper = 0;
+        this.log.log("przetwarzam nieznalezione");
 
-        List<T[]> list = new ArrayList<>();
+        List<String> serialsList = new ArrayList(Arrays.asList(serials));
+        List<String> foundSerialsList = new ArrayList(Arrays.asList(foundSerials));
 
-        for (int i = 0; i <= x; i++) {
-            upper += max;
-            list.add(Arrays.copyOfRange(array, lower, upper));
-            lower = upper;
-        }
-        if (upper < array.length - 1) {
-            lower = upper;
-            upper = array.length;
-            list.add(Arrays.copyOfRange(array, lower, upper));
-        }
-
-        return list;
+        return serialsList.stream().parallel().filter(p -> !foundSerialsList.contains(p)).toArray(size -> new String[size]);
     }
+
+    public void setLog(LogPresenter log) {
+        this.log = log;
+    }
+
 }

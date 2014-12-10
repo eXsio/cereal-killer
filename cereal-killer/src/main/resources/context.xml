@@ -73,7 +73,7 @@
             </bean>
         </property>
         <property name="notFoundRetriever" >
-            <bean class="pl.exsio.ck.comparator.retriever.notfound.NotFoundSerialsRetrieverImpl">
+            <bean class="pl.exsio.ck.comparator.retriever.notfound.StreamsNotFoundSerialsRetrieverImpl">
                 <property name="log" ref="logPresenter"/>
             </bean>
         </property>

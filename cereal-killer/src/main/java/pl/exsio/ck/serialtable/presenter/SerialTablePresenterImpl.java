@@ -70,7 +70,7 @@ public class SerialTablePresenterImpl implements SerialTablePresenter {
                 DefaultTableModel tm = this.createTableModel();
                 this.fillTableData(tm);
                 table.setModel(tm);
-                sorter = new TableRowSorter<TableModel>(tm);
+                sorter = new TableRowSorter<>(tm);
                 table.setRowSorter(sorter);
                 return null;
             }

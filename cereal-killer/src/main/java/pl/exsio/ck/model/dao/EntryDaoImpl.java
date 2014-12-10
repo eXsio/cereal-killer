@@ -226,7 +226,7 @@ public final class EntryDaoImpl implements EntryDao {
 
     protected Map<String, List<Entry>> createSaveMap(Collection<Entry> entries) {
         Map<String, List<Entry>> saveMap = new LinkedHashMap<>();
-        for (Entry e : entries) {
+        entries.stream().forEach((Entry e) -> {
             String digest = e.getDigest();
             List<Entry> entriesGroup = null;
             if (!saveMap.containsKey(digest)) {
@@ -236,7 +236,7 @@ public final class EntryDaoImpl implements EntryDao {
                 entriesGroup = saveMap.get(digest);
             }
             entriesGroup.add(e);
-        }
+        });
         return saveMap;
     }
 

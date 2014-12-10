@@ -38,7 +38,7 @@ public class BrowserFrame extends AbstractFrame {
         initComponents();
         this.setSize(400, 300);
         showOnScreen(0);
-        
+
     }
 
     /**
